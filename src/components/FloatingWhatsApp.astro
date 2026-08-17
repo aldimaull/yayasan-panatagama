@@ -1,0 +1,49 @@
+---
+import Icon from './Icon.astro';
+import { contact, waLink, defaultWaMessage } from '../data/site';
+
+const href = waLink(contact.mainWhatsApp.number, defaultWaMessage);
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+  data-wa-fab
+  class="group fixed bottom-5 right-5 z-40 flex translate-y-24 items-center gap-3 rounded-full bg-[#25D366] py-3.5 pl-4 pr-5 font-bold text-primary-950 opacity-0 shadow-lift transition-all duration-500 ease-out-expo hover:-translate-y-0.5 hover:brightness-105 md:bottom-8 md:right-8"
+  aria-label="Hubungi kami via WhatsApp"
+>
+  <span class="relative flex h-6 w-6 items-center justify-center">
+    <span class="absolute inset-0 animate-ping rounded-full bg-primary-950/25" style="animation-duration:2.6s"></span>
+    <Icon name="whatsapp" size={24} class="relative" />
+  </span>
+  <span class="hidden text-[0.9rem] sm:inline">Tanya Admin</span>
+</a>
+
+<style>
+  [data-wa-fab].is-visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+</style>
+
+<script>
+  let bound = false;
+
+  function syncFab() {
+    document
+      .querySelector<HTMLElement>('[data-wa-fab]')
+      ?.classList.toggle('is-visible', window.scrollY > 520);
+  }
+
+  function initFab() {
+    if (!document.querySelector('[data-wa-fab]')) return;
+    syncFab();
+    // `astro:page-load` juga menyala saat pemuatan awal — pasang listener sekali saja
+    if (bound) return;
+    bound = true;
+    window.addEventListener('scroll', syncFab, { passive: true });
+  }
+  initFab();
+  document.addEventListener('astro:page-load', initFab);
+</script>

@@ -1,0 +1,59 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import Reveal from './Reveal.astro';
+import { img } from '../lib/images';
+
+interface Props {
+  items: { name: string; caption: string }[];
+  /** 'mosaic' = grid asimetris ala editorial, 'even' = grid seragam */
+  layout?: 'mosaic' | 'even';
+  class?: string;
+}
+const { items, layout = 'mosaic', class: className = '' } = Astro.props as Props;
+
+// Pola span asimetris agar grid tidak terasa seperti template
+const spans = [
+  'md:col-span-2 md:row-span-2',
+  'md:col-span-2',
+  'md:col-span-2',
+  'md:col-span-3',
+  'md:col-span-3',
+  'md:col-span-2',
+  'md:col-span-2',
+  'md:col-span-2',
+];
+---
+
+<div
+  class={`grid gap-4 sm:grid-cols-2 md:auto-rows-[13rem] ${layout === 'mosaic' ? 'md:grid-cols-6' : 'md:grid-cols-3'} ${className}`}
+>
+  {
+    items.map((item, i) => (
+      <Reveal
+        as="figure"
+        animation="zoom"
+        delay={(i % 4) * 80}
+        class={`group relative overflow-hidden rounded-2xl bg-primary-100 ${layout === 'mosaic' ? spans[i % spans.length] : ''}`}
+      >
+        <Image
+          src={img(item.name)}
+          alt={item.caption}
+          widths={[400, 700, 1100]}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw"
+          class="h-56 w-full object-cover transition-transform duration-[1100ms] ease-out-expo group-hover:scale-110 md:h-full"
+          loading="lazy"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-primary-950/85 via-primary-950/10 to-transparent opacity-70 transition-opacity duration-500 group-hover:opacity-95" />
+        <figcaption class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5">
+          <span class="translate-y-1 text-[0.9rem] font-bold leading-tight text-white opacity-0 transition-all duration-500 ease-out-expo group-hover:translate-y-0 group-hover:opacity-100">
+            {item.caption}
+          </span>
+          <span class="flex h-8 w-8 shrink-0 scale-90 items-center justify-center rounded-full bg-white/15 text-white opacity-0 backdrop-blur transition-all duration-500 ease-out-expo group-hover:scale-100 group-hover:opacity-100">
+            <Icon name="arrow-up-right" size={15} />
+          </span>
+        </figcaption>
+      </Reveal>
+    ))
+  }
+</div>

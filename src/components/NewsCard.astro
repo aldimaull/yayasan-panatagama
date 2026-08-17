@@ -1,0 +1,110 @@
+---
+import { Image } from "astro:assets";
+import Icon from "./Icon.astro";
+import { img } from "../lib/images";
+import { formatDate, type Post } from "../data/news";
+
+interface Props {
+  post: Post;
+  layout?: "card" | "wide";
+  class?: string;
+}
+const { post, layout = "card", class: className = "" } = Astro.props as Props;
+
+const categoryTone: Record<Post["category"], string> = {
+  Prestasi: "bg-gold-400 text-primary-900",
+  Kegiatan: "bg-primary-600 text-white",
+  Pengumuman: "bg-secondary-600 text-white",
+  Parenting: "bg-primary-100 text-primary-700",
+};
+const wide = layout === "wide";
+
+// `cover` bisa berupa nama file lokal (src/assets/...) atau URL remote
+// (misal dari WordPress). astro:assets mendukung keduanya selama domain
+// remote-nya sudah didaftarkan di astro.config.mjs (image.domains).
+const isRemote = /^https?:\/\//.test(post.cover);
+const coverSrc = isRemote ? post.cover : img(post.cover);
+
+// Gambar remote wajib punya width/height eksplisit (astro:assets tidak bisa
+// membaca dimensi file dari luar). Fallback ke rasio 4:3 kalau WordPress
+// tidak mengembalikan mediaDetails (misal cover belum diisi).
+const coverWidth = isRemote ? post.coverWidth || 1200 : undefined;
+const coverHeight = isRemote ? post.coverHeight || 900 : undefined;
+---
+
+<article
+  class={`card card-hover group ${wide ? "md:flex" : "flex flex-col"} ${className}`}
+>
+  <a
+    href={`/berita/${post.slug}`}
+    class={`relative block overflow-hidden ${wide ? "md:w-[46%] md:shrink-0 md:self-start" : ""}`}
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <Image
+      src={coverSrc}
+      width={coverWidth}
+      height={coverHeight}
+      alt=""
+      widths={[400, 700, 1100]}
+      sizes={wide
+        ? "(max-width: 768px) 100vw, 46vw"
+        : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"}
+      class={`w-full object-cover transition-transform duration-[900ms] ease-out-expo group-hover:scale-[1.06] ${wide ? "aspect-[16/10] h-auto" : "h-52"}`}
+      loading="lazy"
+    />
+    <span
+      class={`absolute left-4 top-4 rounded-full px-3 py-1.5 text-[0.68rem] font-extrabold uppercase tracking-wider ${categoryTone[post.category]}`}
+    >
+      {post.category}
+    </span>
+  </a>
+
+  <div
+    class={`flex flex-1 flex-col p-6 md:p-7 ${wide ? "md:justify-center" : ""}`}
+  >
+    <div class="flex items-center gap-3 text-xs font-semibold text-ink-muted">
+      <time datetime={post.date} class="flex items-center gap-1.5">
+        <Icon name="calendar" size={13} />
+        {formatDate(post.date)}
+      </time>
+      <span class="h-1 w-1 rounded-full bg-sand-300"></span>
+      <span>{post.readingTime} menit baca</span>
+    </div>
+
+    <h3
+      class={`mt-3 font-extrabold leading-snug tracking-tight text-primary-800 ${wide ? "text-2xl md:text-3xl" : "text-lg"}`}
+    >
+      <a
+        href={`/berita/${post.slug}`}
+        class="transition-colors duration-300 hover:text-secondary-600"
+      >
+        <span class="absolute inset-0 z-10"></span>
+        {post.title}
+      </a>
+    </h3>
+
+    <p
+      class={`mt-3 text-[0.9375rem] leading-relaxed text-ink-soft ${wide ? "" : "line-clamp-3"}`}
+    >
+      {post.excerpt}
+    </p>
+
+    <span
+      class="mt-5 inline-flex items-center gap-2 text-[0.875rem] font-bold text-secondary-600"
+    >
+      Baca selengkapnya
+      <Icon
+        name="arrow-right"
+        size={15}
+        class="transition-transform duration-300 group-hover:translate-x-1"
+      />
+    </span>
+  </div>
+</article>
+
+<style>
+  article {
+    position: relative;
+  }
+</style>

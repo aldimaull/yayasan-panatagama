@@ -1,0 +1,86 @@
+---
+import Ornament from './Ornament.astro';
+import Reveal from './Reveal.astro';
+import { stats } from '../data/site';
+---
+
+<section class="relative overflow-hidden bg-primary-800 py-16 md:py-20" aria-labelledby="statistik">
+  <Ornament type="star-grid" class="text-gold-300" opacity={0.05} />
+  <div
+    class="pointer-events-none absolute -left-24 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-primary-500/25 blur-3xl"
+  >
+  </div>
+  <div class="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-gold-400/10 blur-3xl"></div>
+
+  <div class="container relative">
+    <h2 id="statistik" class="sr-only">Statistik Yayasan Panatagama</h2>
+    <dl class="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4">
+      {
+        stats.map((s, i) => (
+          <Reveal delay={i * 90} class="relative text-center lg:text-left">
+            {i > 0 && (
+              <span class="absolute -left-3 top-1/2 hidden h-14 w-px -translate-y-1/2 bg-white/12 lg:block" />
+            )}
+            <dd
+              class="text-[2.75rem] font-extrabold leading-none tracking-tighter text-white md:text-6xl"
+              data-count={s.value}
+              data-suffix={s.suffix}
+            >{`0${s.suffix}`}</dd>
+            <dt class="mt-3 text-[0.95rem] font-bold text-gold-300">{s.label}</dt>
+            <p class="mt-1 text-[0.8rem] text-white/65">{s.desc}</p>
+          </Reveal>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<script>
+  function initCounters() {
+    // `astro:page-load` juga menyala saat pemuatan awal — lewati elemen yang sudah diproses
+    const els = document.querySelectorAll<HTMLElement>('[data-count]:not([data-counting])');
+    if (!els.length) return;
+    els.forEach((el) => (el.dataset.counting = '1'));
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const render = (el: HTMLElement, v: number) => {
+      const suffix = el.dataset.suffix ?? '';
+      const target = Number(el.dataset.count);
+      // Tahun tidak diberi pemisah ribuan
+      const isYear = target > 1900 && target < 2200 && !suffix;
+      el.textContent = (isYear ? String(v) : v.toLocaleString('id-ID')) + suffix;
+    };
+
+    const run = (el: HTMLElement) => {
+      const target = Number(el.dataset.count);
+      if (reduced) return render(el, target);
+      const from = target > 1900 && target < 2200 && !el.dataset.suffix ? target - 24 : 0;
+      const dur = 1500;
+      const t0 = performance.now();
+      const tick = (now: number) => {
+        const p = Math.min((now - t0) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        render(el, Math.round(from + (target - from) * eased));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    if (!('IntersectionObserver' in window)) return els.forEach(run);
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          run(e.target as HTMLElement);
+          io.unobserve(e.target);
+        }
+      },
+      { threshold: 0.4 },
+    );
+    els.forEach((el) => io.observe(el));
+  }
+
+  initCounters();
+  document.addEventListener('astro:page-load', initCounters);
+</script>

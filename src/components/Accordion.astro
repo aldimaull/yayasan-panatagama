@@ -1,0 +1,47 @@
+---
+import Icon from './Icon.astro';
+import Reveal from './Reveal.astro';
+
+interface Props {
+  items: { q: string; a: string }[];
+  class?: string;
+}
+const { items, class: className = '' } = Astro.props as Props;
+---
+
+<!-- Memakai <details>/<summary> asli: aksesibel & tetap berfungsi tanpa JavaScript -->
+<div class={`space-y-3 ${className}`}>
+  {
+    items.map((item, i) => (
+      <Reveal delay={i * 60}>
+        <details
+          class="group overflow-hidden rounded-2xl border border-sand-200 bg-white transition-colors duration-300 open:border-primary-200 open:shadow-soft"
+          name="faq"
+        >
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 font-bold text-primary-800 transition-colors duration-200 hover:text-secondary-600 md:px-7">
+            <span class="text-[1.0rem] leading-snug">{item.q}</span>
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary-600 transition-all duration-300 ease-out-expo group-open:rotate-45 group-open:bg-secondary-500 group-open:text-white">
+              <Icon name="plus" size={16} />
+            </span>
+          </summary>
+          <div class="px-6 pb-6 text-[0.9375rem] leading-relaxed text-ink-soft md:px-7">{item.a}</div>
+        </details>
+      </Reveal>
+    ))
+  }
+</div>
+
+<style>
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  details > div {
+    animation: faq-open 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes faq-open {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+</style>

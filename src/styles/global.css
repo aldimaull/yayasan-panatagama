@@ -1,0 +1,234 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --nav-h: 4.5rem;
+    color-scheme: light;
+  }
+
+  * {
+    @apply border-sand-200;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+    scroll-padding-top: calc(var(--nav-h) + 1.5rem);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-sand-50 font-sans text-ink;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-primary-600 text-white;
+  }
+
+  /* Focus state konsisten & terlihat untuk aksesibilitas keyboard */
+  :where(
+    a,
+    button,
+    input,
+    textarea,
+    select,
+    summary,
+    [tabindex]
+  ):focus-visible {
+    @apply outline-none ring-2 ring-secondary-500 ring-offset-2 ring-offset-sand-50 rounded-sm;
+  }
+
+  /* Scrollbar halus */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-sand-100;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-primary-200;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-300;
+  }
+
+  img,
+  svg,
+  video {
+    @apply block max-w-full;
+  }
+}
+
+@layer components {
+  /* ---------- Section & layout helpers ---------- */
+  .section {
+    @apply relative py-20 md:py-28 lg:py-32;
+  }
+  .section-tight {
+    @apply relative py-14 md:py-20;
+  }
+
+  /* ---------- Scroll reveal ---------- */
+  [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+    transition:
+      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  [data-reveal="left"] {
+    transform: translate3d(-28px, 0, 0);
+  }
+  [data-reveal="right"] {
+    transform: translate3d(28px, 0, 0);
+  }
+  [data-reveal="zoom"] {
+    transform: scale(0.94);
+  }
+  [data-reveal="clip"] {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 1s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  [data-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* ---------- Kartu ---------- */
+  .card {
+    @apply relative overflow-hidden rounded-3xl border border-sand-200 bg-white  transition-all duration-500 ease-out-expo;
+  }
+  .card-hover {
+    @apply hover:-translate-y-1.5 hover:border-primary-200;
+  }
+
+  /* ---------- Eyebrow / label ---------- */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-eyebrow uppercase;
+  }
+
+  /* ---------- Prose untuk artikel ---------- */
+  .prose-panata {
+    @apply text-[1.0625rem] leading-[1.8] text-ink-soft;
+  }
+  .prose-panata > * + * {
+    @apply mt-5;
+  }
+  .prose-panata h2 {
+    @apply mt-12 text-display-sm text-primary-800;
+  }
+  .prose-panata h3 {
+    @apply mt-9 text-xl font-bold text-primary-700;
+  }
+  .prose-panata ul {
+    @apply space-y-2.5 pl-1;
+  }
+  .prose-panata li {
+    @apply relative pl-6;
+  }
+  .prose-panata li::before {
+    content: "";
+    @apply absolute left-0 top-[0.7em] h-1.5 w-1.5 rounded-full bg-gold-400;
+  }
+  .prose-panata strong {
+    @apply font-bold text-ink;
+  }
+  .prose-panata blockquote {
+    @apply rounded-2xl border-l-4 border-gold-400 bg-primary-50/60 px-6 py-5 font-medium italic text-primary-800;
+  }
+  .prose-panata a {
+    @apply font-semibold text-secondary-600 underline decoration-secondary-300 underline-offset-4 hover:decoration-secondary-500;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(to bottom, black 62%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 62%, transparent 100%);
+  }
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 8%,
+      black 92%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 8%,
+      black 92%,
+      transparent
+    );
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  /* Garis dekoratif gradasi tipis */
+  .hairline {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-sand-300 to-transparent;
+  }
+}
+
+/* Hormati preferensi pengguna: matikan animasi */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+}
+
+/* Transisi antar halaman (Astro View Transitions) */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root) {
+  animation: vt-out 0.28s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+::view-transition-new(root) {
+  animation: vt-in 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}

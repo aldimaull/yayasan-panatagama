@@ -1,0 +1,151 @@
+---
+import { Image } from "astro:assets";
+import Icon from "./Icon.astro";
+import Ornament from "./Ornament.astro";
+import Reveal from "./Reveal.astro";
+import { img } from "../lib/images";
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  highlight?: string;
+  desc?: string;
+  image?: string;
+  /** Nama berkas logo unit di src/assets, mis. "logo-sd" */
+  logo?: string;
+  logoAlt?: string;
+  breadcrumbs?: { label: string; href?: string }[];
+  class?: string;
+}
+const {
+  eyebrow,
+  title,
+  highlight,
+  desc,
+  image,
+  logo,
+  logoAlt = "",
+  breadcrumbs = [],
+  class: className = "",
+} = Astro.props as Props;
+
+const parts =
+  highlight && title.includes(highlight) ? title.split(highlight) : null;
+---
+
+<section
+  class={`relative overflow-hidden bg-primary-900 pb-24 pt-36 md:pb-32 md:pt-44 ${className}`}
+>
+  {
+    image && (
+      <div class="absolute inset-0">
+        <Image
+          src={img(image)}
+          alt=""
+          widths={[800, 1400, 1920]}
+          sizes="100vw"
+          class="h-full w-full object-cover opacity-30"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <div class="absolute inset-0 bg-gradient-to-br from-primary-950 via-primary-900/30 to-primary-900/10" />
+      </div>
+    )
+  }
+  <div class="absolute inset-0 bg-primary-mesh mix-blend-screen"></div>
+  <!-- <Ornament type="pattern" class="text-white" opacity={0.055} /> -->
+  <Ornament type="wave-bottom" class="h-10 text-sand-50 md:h-16" />
+
+  <div class="container relative">
+    {
+      breadcrumbs.length > 0 && (
+        <Reveal>
+          <nav aria-label="Breadcrumb">
+            <ol class="flex flex-wrap items-center gap-1.5 text-[0.8rem] font-semibold text-white/50">
+              <li>
+                <a href="/" class="transition-colors hover:text-gold-300">
+                  Beranda
+                </a>
+              </li>
+              {breadcrumbs.map((b) => (
+                <li class="flex items-center gap-1.5">
+                  <Icon name="chevron-right" size={12} class="text-white/25" />
+                  {b.href ? (
+                    <a
+                      href={b.href}
+                      class="transition-colors hover:text-gold-300"
+                    >
+                      {b.label}
+                    </a>
+                  ) : (
+                    <span class="text-white/80">{b.label}</span>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </Reveal>
+      )
+    }
+
+    <div class="mt-7 max-w-4xl">
+      {
+        logo && (
+          <Reveal animation="zoom" class="mb-7 block">
+            {/* Plat putih: bagian hijau tua pada logo tenggelam di latar gelap */}
+            <span class="inline-flex rounded-2xl bg-white px-5 py-4 shadow-lift">
+              {/* Logo unit berupa lockup memanjang — ukurannya dipatok dari LEBAR,
+                  bukan tinggi, agar wordmark di dalamnya tetap terbaca. */}
+              <Image
+                src={img(logo)}
+                alt={logoAlt}
+                widths={[240, 480, 720]}
+                sizes="(max-width: 640px) 208px, 240px"
+                class="h-auto w-52 md:w-60"
+                loading="eager"
+              />
+            </span>
+          </Reveal>
+        )
+      }
+
+      {
+        eyebrow && (
+          <Reveal delay={60}>
+            <span class="eyebrow rounded-full bg-gold-400/15 px-4 py-2 text-gold-300">
+              {eyebrow}
+            </span>
+          </Reveal>
+        )
+      }
+
+      <Reveal delay={120}>
+        <h1 class="mt-6 text-display-lg text-balance text-white">
+          {
+            parts ? (
+              <Fragment>
+                {parts[0]}
+                <span class="text-gold-300">{highlight}</span>
+                {parts[1]}
+              </Fragment>
+            ) : (
+              title
+            )
+          }
+        </h1>
+      </Reveal>
+
+      {
+        desc && (
+          <Reveal delay={190}>
+            <p class="mt-6 max-w-2xl text-lead text-pretty text-white/70">
+              {desc}
+            </p>
+          </Reveal>
+        )
+      }
+
+      <slot />
+    </div>
+  </div>
+</section>

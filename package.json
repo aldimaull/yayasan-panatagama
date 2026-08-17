@@ -1,0 +1,25 @@
+{
+  "name": "yayasan-panatagama",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Website company profile Yayasan Panatagama — Subang, Jawa Barat",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "generate:images": "node scripts/generate-placeholders.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/tailwind": "^6.0.2",
+    "@fontsource-variable/plus-jakarta-sans": "^5.1.1",
+    "astro": "^5.1.1",
+    "tailwindcss": "^3.4.17"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.5"
+  }
+}

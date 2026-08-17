@@ -1,0 +1,63 @@
+---
+import Icon from "./Icon.astro";
+import type { Testimonial } from "../data/testimonials";
+
+interface Props {
+  item: Testimonial;
+  tone?: "light" | "dark";
+  class?: string;
+}
+const { item, tone = "light", class: className = "" } = Astro.props as Props;
+const dark = tone === "dark";
+---
+
+<figure
+  class={`group relative flex h-full flex-col rounded-3xl border p-7 transition-all duration-500 ease-out-expo hover:-translate-y-1.5 md:p-8 ${
+    dark
+      ? "border-white/10 bg-white/[0.06] backdrop-blur-sm hover:border-gold-400/40 hover:bg-white/[0.09]"
+      : "border-sand-200 bg-white shadow-md hover:border-primary-200 hover:shadow-lg"
+  } ${className}`}
+>
+  <Icon
+    name="quote"
+    size={34}
+    class={`absolute right-6 top-6 transition-transform duration-500 group-hover:scale-110 ${dark ? "text-white/10" : "text-gold-200"}`}
+  />
+
+  <div
+    class={`flex gap-0.5 ${dark ? "text-gold-300" : "text-gold-400"}`}
+    aria-label="Penilaian 5 dari 5"
+  >
+    {
+      [1, 2, 3, 4, 5].map(() => (
+        <Icon name="star" size={15} class="fill-current" />
+      ))
+    }
+  </div>
+
+  <blockquote
+    class={`relative mt-5 flex-1 text-[0.9875rem] leading-[1.75] ${dark ? "text-white/75" : "text-ink-soft"}`}
+  >
+    “{item.quote}”
+  </blockquote>
+
+  <figcaption
+    class={`mt-7 flex items-center gap-3.5 border-t pt-5 ${dark ? "border-white/10" : "border-sand-200"}`}
+  >
+    <span
+      class={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-extrabold ${
+        dark ? "bg-gold-400 text-primary-900" : "bg-primary-600 text-white"
+      }`}
+      aria-hidden="true">{item.initials}</span
+    >
+    <span>
+      <span
+        class={`block text-[0.9rem] font-bold ${dark ? "text-white" : "text-primary-800"}`}
+        >{item.name}</span
+      >
+      <span class={`block text-xs ${dark ? "text-white/55" : "text-ink-muted"}`}
+        >{item.role}</span
+      >
+    </span>
+  </figcaption>
+</figure>

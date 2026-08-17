@@ -1,0 +1,169 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import NewsCard from '../../components/NewsCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Reveal from '../../components/Reveal.astro';
+import Icon from '../../components/Icon.astro';
+import { getAllPosts } from '../../lib/wordpress';
+
+// Sebelumnya: import { sortedPosts, categories } from '../../data/news';
+// Sekarang: fetch langsung dari WordPress lewat GraphQL saat build.
+const sortedPosts = await getAllPosts();
+
+// Kategori diturunkan otomatis dari data berita yang ada,
+// "Semua" selalu jadi opsi pertama.
+const categories = ['Semua', ...new Set(sortedPosts.map((p) => p.category))];
+
+const [lead, ...rest] = sortedPosts;
+---
+
+<BaseLayout
+  title="Berita & Kegiatan"
+  description="Kabar terbaru dari Panatagama Islamic School: prestasi siswa, agenda sekolah, pengumuman SPMB, dan tulisan seputar pengasuhan."
+>
+  <PageHero
+    eyebrow="Berita & Kegiatan"
+    title="Cerita dari dalam sekolah"
+    highlight="dari dalam"
+    desc="Prestasi siswa, agenda besar tahunan, pengumuman resmi, dan catatan-catatan kecil dari kelas kami."
+    image="berita-04"
+    breadcrumbs={[{ label: 'Berita' }]}
+  />
+
+  {lead && (
+    <!-- ================================================== SOROTAN UTAMA -->
+    <section
+      class="section-tight pt-20 md:pt-24"
+      aria-labelledby="sorotan"
+      data-post-item
+      data-category={lead.category}
+    >
+      <div class="container">
+        <Reveal>
+          <h2 id="sorotan" class="eyebrow text-secondary-600">
+            <span class="h-px w-6 bg-secondary-400"></span>
+            Sorotan Utama
+          </h2>
+        </Reveal>
+        <Reveal delay={90} class="mt-6 block">
+          <NewsCard post={lead} layout="wide" />
+        </Reveal>
+      </div>
+    </section>
+  )}
+
+  <!-- ======================================================= DAFTAR -->
+  <section class="section pt-8" aria-labelledby="daftar-berita">
+    <div class="container">
+      <div class="flex flex-col gap-6 border-b border-sand-200 pb-8 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h2 id="daftar-berita" class="text-display-sm text-primary-800">Semua tulisan</h2>
+          <p class="mt-2 text-[0.95rem] text-ink-soft">
+            <span data-post-count>{sortedPosts.length}</span> tulisan tersedia
+          </p>
+        </div>
+
+        <!-- Penyaring kategori -->
+        <div class="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 md:mx-0 md:px-0" role="group" aria-label="Saring berita berdasarkan kategori">
+          {
+            categories.map((c, i) => (
+              <button
+                type="button"
+                data-filter={c}
+                aria-pressed={i === 0 ? 'true' : 'false'}
+                class:list={[
+                  'shrink-0 rounded-full border px-5 py-2.5 text-[0.85rem] font-bold transition-all duration-300 ease-out-expo',
+                  i === 0
+                    ? 'border-primary-600 bg-primary-600 text-white'
+                    : 'border-sand-200 bg-white text-ink-soft hover:-translate-y-0.5 hover:border-primary-300',
+                ]}
+              >
+                {c}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-post-grid>
+        {
+          sortedPosts.map((p, i) => (
+            <Reveal delay={(i % 3) * 90} class="h-full" data-post-item data-category={p.category}>
+              <NewsCard post={p} class="h-full" />
+            </Reveal>
+          ))
+        }
+      </div>
+
+      <p
+        data-empty
+        class:list={[
+          'mt-12 flex-col items-center gap-3 rounded-3xl border border-dashed border-sand-300 py-16 text-center text-ink-muted',
+          sortedPosts.length === 0 ? 'flex' : 'hidden',
+        ]}
+      >
+        <Icon name="search" size={26} />
+        <span class="text-[0.95rem] font-semibold">
+          {sortedPosts.length === 0
+            ? 'Belum ada berita yang dipublikasikan.'
+            : 'Belum ada tulisan pada kategori ini.'}
+        </span>
+      </p>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Ingin melihat kegiatannya langsung?"
+    desc="Ikuti Instagram kami untuk dokumentasi harian, atau jadwalkan kunjungan untuk merasakan sendiri suasananya."
+  />
+</BaseLayout>
+
+<script>
+  function initFilter() {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+    const items = document.querySelectorAll<HTMLElement>('[data-post-item]');
+    const empty = document.querySelector<HTMLElement>('[data-empty]');
+    const counter = document.querySelector<HTMLElement>('[data-post-count]');
+    if (!buttons.length) return;
+
+    // `astro:page-load` juga menyala saat pemuatan awal — cegah handler ganda
+    if (buttons[0].dataset.bound === '1') return;
+    buttons.forEach((b) => (b.dataset.bound = '1'));
+
+    const active = 'border-primary-600 bg-primary-600 text-white';
+    const idle = 'border-sand-200 bg-white text-ink-soft hover:-translate-y-0.5 hover:border-primary-300';
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const cat = btn.dataset.filter!;
+
+        buttons.forEach((b) => {
+          const on = b === btn;
+          b.setAttribute('aria-pressed', String(on));
+          b.className = b.className
+            .replace(active, '')
+            .replace(idle, '')
+            .trim()
+            .concat(' ', on ? active : idle);
+        });
+
+        let shown = 0;
+        items.forEach((item) => {
+          const match = cat === 'Semua' || item.dataset.category === cat;
+          item.classList.toggle('hidden', !match);
+          if (match) shown++;
+        });
+
+        if (counter) counter.textContent = String(shown);
+        // Artikel sorotan ikut dihitung, jadi pesan "kosong" hanya muncul
+        // bila benar-benar tidak ada tulisan pada kategori tersebut.
+        empty?.classList.toggle('hidden', shown > 0);
+        empty?.classList.toggle('flex', shown === 0);
+      });
+    });
+  }
+
+  initFilter();
+  document.addEventListener('astro:page-load', initFilter);
+</script>

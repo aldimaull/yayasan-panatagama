@@ -1,0 +1,70 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'white' | 'gold';
+  size?: 'sm' | 'md' | 'lg';
+  icon?: IconName;
+  iconPosition?: 'left' | 'right';
+  class?: string;
+  external?: boolean;
+  type?: 'button' | 'submit';
+  fullWidth?: boolean;
+  'aria-label'?: string;
+}
+
+const {
+  href,
+  variant = 'secondary',
+  size = 'md',
+  icon,
+  iconPosition = 'right',
+  class: className = '',
+  external = false,
+  type = 'button',
+  fullWidth = false,
+  ...rest
+} = Astro.props as Props;
+
+const base =
+  'group/btn relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full font-bold tracking-tight transition-all duration-300 ease-out-expo active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50';
+
+const variants = {
+  // secondary-600 dipakai sebagai alas teks putih (4.8:1 — lolos AA);
+  // secondary-500 tetap menjadi warna aksen dekoratif merek.
+  secondary: 'bg-secondary-600 text-white shadow-glow hover:bg-secondary-700 hover:-translate-y-0.5',
+  primary: 'bg-primary-600 text-white shadow-soft hover:bg-primary-700 hover:-translate-y-0.5 hover:shadow-lift',
+  gold: 'bg-gold-400 text-primary-900 shadow-soft hover:bg-gold-300 hover:-translate-y-0.5',
+  outline:
+    'border-2 border-primary-600/25 bg-white/60 text-primary-700 backdrop-blur hover:border-primary-600 hover:bg-white hover:-translate-y-0.5',
+  white: 'bg-white text-primary-700 shadow-soft hover:-translate-y-0.5 hover:shadow-lift',
+  ghost: 'text-primary-700 hover:bg-primary-50',
+};
+
+const sizes = {
+  sm: 'px-4 py-2 text-sm',
+  md: 'px-6 py-3 text-[0.9375rem]',
+  lg: 'px-7 py-4 text-base md:px-8',
+};
+
+const cls = [base, variants[variant], sizes[size], fullWidth && 'w-full', className]
+  .filter(Boolean)
+  .join(' ');
+
+const Tag = href ? 'a' : 'button';
+const extra = href
+  ? { href, ...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
+  : { type };
+---
+
+<Tag class={cls} {...extra} {...rest}>
+  <!-- kilau halus saat hover -->
+  <span
+    class="pointer-events-none absolute inset-0 -translate-x-[120%] skew-x-[-18deg] bg-white/20 transition-transform duration-700 ease-out-expo group-hover/btn:translate-x-[220%]"
+    aria-hidden="true"></span>
+
+  {icon && iconPosition === 'left' && <Icon name={icon} size={18} class="relative shrink-0 transition-transform duration-300 group-hover/btn:-translate-x-0.5" />}
+  <span class="relative"><slot /></span>
+  {icon && iconPosition === 'right' && <Icon name={icon} size={18} class="relative shrink-0 transition-transform duration-300 group-hover/btn:translate-x-1" />}
+</Tag>

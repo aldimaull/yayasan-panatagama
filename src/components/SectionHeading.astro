@@ -1,0 +1,81 @@
+---
+import Reveal from './Reveal.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  /** Bagian judul yang di-highlight dengan warna aksen — ditulis persis seperti di `title` */
+  highlight?: string;
+  desc?: string;
+  align?: 'left' | 'center';
+  tone?: 'light' | 'dark';
+  class?: string;
+  maxW?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  highlight,
+  desc,
+  align = 'left',
+  tone = 'light',
+  class: className = '',
+  maxW = 'max-w-2xl',
+} = Astro.props as Props;
+
+const dark = tone === 'dark';
+const parts = highlight && title.includes(highlight) ? title.split(highlight) : null;
+---
+
+<div class={`${align === 'center' ? `mx-auto text-center ${maxW}` : maxW} ${className}`}>
+  {
+    eyebrow && (
+      <Reveal>
+        <span
+          class={`eyebrow ${dark ? 'text-gold-300' : 'text-secondary-600'} ${align === 'center' ? 'justify-center' : ''}`}
+        >
+          <span class={`h-px w-6 ${dark ? 'bg-gold-300/60' : 'bg-secondary-400'}`} />
+          {eyebrow}
+        </span>
+      </Reveal>
+    )
+  }
+
+  <Reveal delay={70}>
+    <h2 class={`mt-4 text-display-md text-balance ${dark ? 'text-white' : 'text-primary-800'}`}>
+      {
+        parts ? (
+          <Fragment>
+            {parts[0]}<span class="relative inline-block"><span
+                class={dark ? 'text-gold-300' : 'text-secondary-500'}>{highlight}</span
+              ><svg
+                class={`absolute -bottom-1 left-0 h-[0.34em] w-full ${dark ? 'text-gold-400/50' : 'text-gold-400/70'}`}
+                viewBox="0 0 120 12"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M2 8.5C22 3.5 44 2.5 60 4.2c16 1.7 38 3.4 58 .3"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                />
+              </svg></span>{parts[1]}
+          </Fragment>
+        ) : (
+          title
+        )
+      }
+    </h2>
+  </Reveal>
+
+  {
+    desc && (
+      <Reveal delay={140}>
+        <p class={`mt-5 text-lead text-pretty ${dark ? 'text-white/70' : 'text-ink-soft'}`}>{desc}</p>
+      </Reveal>
+    )
+  }
+</div>

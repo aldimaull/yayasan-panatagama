@@ -1,0 +1,53 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+
+interface Props {
+  icon: IconName;
+  title: string;
+  desc: string;
+  tone?: 'light' | 'dark' | 'plain';
+  index?: number;
+  class?: string;
+}
+const { icon, title, desc, tone = 'light', index, class: className = '' } = Astro.props as Props;
+const dark = tone === 'dark';
+---
+
+<article
+  class={`group relative h-full overflow-hidden rounded-3xl p-7 transition-all duration-500 ease-out-expo md:p-8 ${
+    dark
+      ? 'border border-white/10 bg-white/[0.06] hover:-translate-y-1.5 hover:border-gold-400/40 hover:bg-white/[0.1]'
+      : tone === 'plain'
+        ? 'hover:-translate-y-1'
+        : 'border border-sand-200 bg-white shadow-soft hover:-translate-y-1.5 hover:border-primary-200 hover:shadow-lift'
+  } ${className}`}
+>
+  {
+    index !== undefined && (
+      <span
+        class={`pointer-events-none absolute -right-3 -top-5 text-[5.5rem] font-extrabold leading-none tracking-tighter transition-colors duration-500 ${
+          dark ? 'text-white/[0.05] group-hover:text-white/[0.09]' : 'text-primary-50 group-hover:text-primary-100'
+        }`}
+        aria-hidden="true"
+      >
+        {String(index).padStart(2, '0')}
+      </span>
+    )
+  }
+
+  <span
+    class={`relative flex h-13 w-13 items-center justify-center rounded-2xl transition-all duration-500 ease-out-expo group-hover:scale-105 group-hover:-rotate-6 ${
+      dark ? 'bg-gold-400/15 text-gold-300' : 'bg-primary-50 text-primary-600 group-hover:bg-primary-600 group-hover:text-white'
+    }`}
+    style="height:3.25rem;width:3.25rem"
+  >
+    <Icon name={icon} size={25} />
+  </span>
+
+  <h3 class={`relative mt-6 text-lg font-extrabold tracking-tight ${dark ? 'text-white' : 'text-primary-800'}`}>
+    {title}
+  </h3>
+  <p class={`relative mt-3 text-[0.9375rem] leading-relaxed ${dark ? 'text-white/65' : 'text-ink-soft'}`}>
+    {desc}
+  </p>
+</article>

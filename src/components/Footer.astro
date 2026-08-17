@@ -1,0 +1,180 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import Ornament from './Ornament.astro';
+import { site, contact, campuses, whatsappContacts, waLink, defaultWaMessage } from '../data/site';
+import { units } from '../data/units';
+
+interface Props {
+  /** Matikan bila bagian tepat di atas footer juga berlatar gelap (mis. halaman 404) */
+  showWave?: boolean;
+}
+const { showWave = true } = Astro.props as Props;
+
+const year = new Date().getFullYear();
+const quick = [
+  { label: 'Tentang Yayasan', href: '/tentang' },
+  { label: 'SPMB 2027/2028', href: '/ppdb' },
+  { label: 'Berita & Kegiatan', href: '/berita' },
+  { label: 'Kontak', href: '/kontak' },
+];
+const socials = [
+  { name: 'instagram' as const, ...contact.social.instagram, label: 'Instagram' },
+  { name: 'facebook' as const, ...contact.social.facebook, label: 'Facebook' },
+  { name: 'youtube' as const, ...contact.social.youtube, label: 'YouTube' },
+];
+---
+
+<footer class="relative overflow-hidden bg-primary-900 text-white/70">
+  <Ornament type="pattern" class="text-white" opacity={0.05} />
+  {showWave && <Ornament type="wave-top" class="h-12 text-sand-50 md:h-16" />}
+
+  <div class="container relative pb-10 pt-24 md:pt-32">
+    <!-- Ajakan penutup -->
+    <div
+      class="mb-16 flex flex-col items-start justify-between gap-6 rounded-4xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm md:flex-row md:items-center md:p-10"
+    >
+      <div>
+        <p class="eyebrow text-gold-300">Masih ragu?</p>
+        <p class="mt-3 max-w-xl text-2xl font-bold leading-snug tracking-tight text-white md:text-3xl">
+          Datang, lihat langsung suasana kelasnya. Kami siap menemani berkeliling.
+        </p>
+      </div>
+      <a
+        href={waLink(contact.mainWhatsApp.number, 'Assalamu\'alaikum, saya ingin menjadwalkan kunjungan ke sekolah.')}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group inline-flex shrink-0 items-center gap-3 rounded-full bg-gold-400 px-7 py-4 font-bold text-primary-900 transition-all duration-300 ease-out-expo hover:-translate-y-0.5 hover:bg-gold-300"
+      >
+        Jadwalkan Kunjungan
+        <Icon name="arrow-up-right" size={18} class="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+      </a>
+    </div>
+
+    <div class="grid gap-12 lg:grid-cols-12">
+      <!-- Identitas -->
+      <div class="lg:col-span-4">
+        <Logo variant="light" size="lg" />
+        <p class="mt-6 max-w-sm text-[0.95rem] leading-relaxed">
+          {site.name} menaungi KB, TK, SD, dan SMP Panatagama Islamic School, Panatagama Course, serta
+          PanataMart di Subang, Jawa Barat.
+        </p>
+        <p class="mt-5 inline-flex items-center gap-2 rounded-full bg-gold-400/15 px-3.5 py-1.5 text-xs font-bold text-gold-300">
+          <Icon name="badge-check" size={14} />
+          {site.accreditation}
+        </p>
+
+        <div class="mt-7 flex gap-2.5">
+          {
+            socials.map((s) => (
+              <a
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${s.label} ${site.name}`}
+                class="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/70 transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-400 hover:bg-gold-400 hover:text-primary-900"
+              >
+                <Icon name={s.name} size={17} />
+              </a>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Unit -->
+      <div class="lg:col-span-2">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-white">Unit</h2>
+        <ul class="mt-5 space-y-3 text-[0.9rem]">
+          {
+            units.map((u) => (
+              <li>
+                <a
+                  href={u.slug === 'panatamart' ? '/panatamart' : `/unit/${u.slug}`}
+                  class="inline-flex items-center gap-1.5 transition-colors duration-200 hover:text-gold-300"
+                >
+                  {u.name}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Tautan cepat -->
+      <div class="lg:col-span-2">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-white">Tautan</h2>
+        <ul class="mt-5 space-y-3 text-[0.9rem]">
+          {
+            quick.map((l) => (
+              <li>
+                <a href={l.href} class="transition-colors duration-200 hover:text-gold-300">
+                  {l.label}
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a
+              href={site.spmbUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 transition-colors duration-200 hover:text-gold-300"
+            >
+              Portal SPMB
+              <Icon name="external-link" size={13} />
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Kontak -->
+      <div class="lg:col-span-4">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-white">Kampus & Kontak</h2>
+        <ul class="mt-5 space-y-5 text-[0.9rem]">
+          {
+            campuses.map((c) => (
+              <li class="flex gap-3">
+                <Icon name="map-pin" size={17} class="mt-0.5 shrink-0 text-gold-300" />
+                <span>
+                  <span class="block font-semibold text-white">{c.units}</span>
+                  <span class="block leading-relaxed">{c.address}</span>
+                </span>
+              </li>
+            ))
+          }
+          <li class="flex gap-3">
+            <Icon name="whatsapp" size={17} class="mt-0.5 shrink-0 text-gold-300" />
+            <span class="flex flex-wrap gap-x-4 gap-y-1">
+              {
+                whatsappContacts.map((w) => (
+                  <a
+                    href={waLink(w.number, defaultWaMessage)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="transition-colors duration-200 hover:text-gold-300"
+                  >
+                    <span class="font-semibold text-white">{w.unit}</span> {w.label}
+                  </a>
+                ))
+              }
+            </span>
+          </li>
+          <li class="flex gap-3">
+            <Icon name="clock" size={17} class="mt-0.5 shrink-0 text-gold-300" />
+            <span>{contact.officeHours}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div
+      class="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-[0.8rem] md:flex-row"
+    >
+      <p>© {year} {site.name}. Seluruh hak cipta dilindungi.</p>
+      <p class="flex items-center gap-2 text-white/50">
+        <Icon name="moon-star" size={14} class="text-gold-300" />
+        {site.tagline}
+      </p>
+    </div>
+  </div>
+</footer>

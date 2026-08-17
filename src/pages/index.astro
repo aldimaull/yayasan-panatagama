@@ -1,0 +1,688 @@
+---
+import { Image } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/Button.astro";
+import Icon from "../components/Icon.astro";
+import Ornament from "../components/Ornament.astro";
+import Reveal from "../components/Reveal.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import UnitCard from "../components/UnitCard.astro";
+import FeatureCard from "../components/FeatureCard.astro";
+import TestimonialCard from "../components/TestimonialCard.astro";
+import StatsBand from "../components/StatsBand.astro";
+import GalleryGrid from "../components/GalleryGrid.astro";
+import NewsCard from "../components/NewsCard.astro";
+import CtaBand from "../components/CtaBand.astro";
+import { img } from "../lib/images";
+import {
+  site,
+  contact,
+  values,
+  habits,
+  facilities,
+  waLink,
+  groupPartners,
+} from "../data/site";
+import { units } from "../data/units";
+import { testimonials } from "../data/testimonials";
+import { sortedPosts } from "../data/news";
+
+const featuredPosts = sortedPosts.slice(0, 3);
+const galleryItems = [
+  { name: "galeri-01", caption: "Upacara & pembiasaan pagi" },
+  { name: "galeri-02", caption: "Praktik lab sains — STEM Education" },
+  { name: "galeri-06", caption: "Khotmil Qur’an bersama" },
+  { name: "galeri-04", caption: "Kelas coding untuk anak" },
+  { name: "galeri-05", caption: "Program aquatic di kolam sekolah" },
+  { name: "galeri-08", caption: "Gema Pramuka" },
+];
+const partners = [
+  "Google for Education",
+  "National Plus Curriculum",
+  "Kurikulum Nasional",
+  "BAN-PDM · Terakreditasi A",
+  "Cambridge Teaching Resources",
+  "Metode Tilawati",
+  "Matematika GASING",
+];
+---
+
+<BaseLayout title={site.name} description={site.description}>
+  <!-- ============================================================ HERO -->
+  <section
+    class="relative overflow-hidden bg-primary-900 pb-28 pt-32 md:pb-36 md:pt-40 lg:pb-40"
+  >
+    <div class="absolute inset-0 bg-primary-mesh"></div>
+    <Ornament type="pattern" class="text-white" opacity={0.06} />
+    <div
+      class="pointer-events-none absolute -left-40 top-20 h-[30rem] w-[30rem] rounded-full bg-primary-400/20 blur-[100px]"
+    >
+    </div>
+    <div
+      class="pointer-events-none absolute -right-32 bottom-0 h-[26rem] w-[26rem] rounded-full bg-secondary-500/20 blur-[100px]"
+    >
+    </div>
+    <Ornament type="wave-bottom" class="h-12 text-sand-50 md:h-20" />
+
+    <div class="container relative">
+      <div class="grid items-center gap-14 lg:grid-cols-12 lg:gap-10">
+        <!-- Kolom teks -->
+        <div class="lg:col-span-8 xl:col-span-7">
+          <Reveal>
+            <span
+              class="inline-flex items-center gap-2.5 rounded-full border border-gold-400/25 bg-gold-400/10 py-2 pl-2 pr-4 text-[0.8rem] font-bold text-gold-300"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center rounded-full bg-gold-400 text-primary-900"
+              >
+                <Icon name="badge-check" size={14} />
+              </span>
+              {site.accreditation}
+            </span>
+          </Reveal>
+
+          <Reveal delay={90}>
+            <h1 class="py-7 text-display-xl text-balance text-white">
+              Menumbuhkan generasi
+              <span class="relative inline-block"
+                ><span class="relative z-10 text-gold-300">berakhlak,</span><svg
+                  class="absolute -bottom-2 left-0 z-0 h-[0.32em] w-full text-secondary-500/70"
+                  viewBox="0 0 200 14"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3 10.5C36 4.5 78 2.5 100 5c22 2.5 64 4.5 97 1"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="4"
+                    stroke-linecap="round"></path>
+                </svg></span
+              >berilmu, berprestasi
+            </h1>
+          </Reveal>
+
+          <Reveal delay={160}>
+            <p class="mt-7 max-w-xl text-lead text-pretty text-white/70">
+              Dari Kelompok Bermain hingga SMP, Panatagama Islamic School
+              memadukan pendidikan Islam yang hangat dengan kurikulum modern —
+              supaya anak tumbuh percaya diri, gemar belajar, dan tetap terjaga
+              adabnya.
+            </p>
+          </Reveal>
+
+          <Reveal delay={230}>
+            <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Button
+                href="/ppdb"
+                variant="secondary"
+                size="lg"
+                icon="arrow-right"
+              >
+                Daftar Sekarang
+              </Button>
+              <Button
+                href={waLink(
+                  contact.mainWhatsApp.number,
+                  "Assalamu'alaikum, saya ingin menjadwalkan kunjungan ke sekolah.",
+                )}
+                variant="outline"
+                size="lg"
+                icon="map-pin"
+                iconPosition="left"
+                external
+                class="!border-white/25 !bg-white/5 !text-white hover:!border-white/60 hover:!bg-white/10"
+              >
+                Jadwalkan Kunjungan
+              </Button>
+            </div>
+          </Reveal>
+
+          <Reveal delay={300}>
+            <div class="mt-12 flex flex-wrap items-center gap-x-8 gap-y-5">
+              <div class="flex items-center gap-3">
+                <div class="flex -space-x-3" aria-hidden="true">
+                  {
+                    ["RH", "AF", "NA", "DK"].map((n, i) => (
+                      <span
+                        class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary-900 text-[0.7rem] font-extrabold text-white"
+                        style={`background:${["#22795A", "#CB4514", "#0A593A", "#084A30"][i]}`}
+                      >
+                        {n}
+                      </span>
+                    ))
+                  }
+                </div>
+                <div>
+                  <div class="flex gap-0.5 text-gold-400">
+                    {
+                      [1, 2, 3, 4, 5].map(() => (
+                        <Icon name="star" size={13} class="fill-current" />
+                      ))
+                    }
+                  </div>
+                  <p class="mt-1 text-[0.8rem] text-white/60">
+                    <span class="font-bold text-white">1.240+</span> siswa & wali
+                    murid mempercayakan pendidikan di sini
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+
+        <!-- Kolom visual: kolase asimetris -->
+        <div class="relative lg:col-span-4 xl:col-span-5">
+          <div
+            class="relative lg:-mt-24 mx-auto max-w-md lg:ml-auto lg:mr-0 lg:max-w-none"
+          >
+            <Ornament
+              type="arch"
+              class="absolute -left-6 -top-8 hidden h-64 w-52 text-gold-300/25 lg:block"
+            />
+
+            <Reveal animation="zoom" delay={120}>
+              <div
+                class="relative overflow-hidden rounded-[2.5rem] shadow-lift ring-1 ring-white/10"
+              >
+                <Image
+                  src={img("hero-utama")}
+                  alt="Suasana belajar siswa Panatagama Islamic School"
+                  widths={[420, 700, 1000]}
+                  sizes="(max-width: 1024px) 90vw, 40vw"
+                  class="aspect-[4/5] w-full object-cover"
+                  loading="eager"
+                  fetchpriority="high"
+                />
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-primary-950/70 via-transparent to-transparent"
+                >
+                </div>
+              </div>
+            </Reveal>
+
+            <!-- Kartu melayang: capaian tahfidz -->
+            <Reveal animation="left" delay={320}>
+              <div
+                class="absolute -left-4 bottom-10 w-56 rounded-2xl bg-white/95 p-4 shadow-lift backdrop-blur md:-left-10 md:w-64 md:p-5"
+              >
+                <div class="flex items-center gap-3">
+                  <span
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white"
+                  >
+                    <Icon name="moon-star" size={21} />
+                  </span>
+                  <div>
+                    <p
+                      class="text-[0.7rem] font-bold uppercase tracking-wider text-ink-muted"
+                    >
+                      Target Tahfidz
+                    </p>
+                    <p
+                      class="text-lg font-extrabold leading-tight text-primary-800"
+                    >
+                      Minimal 2 Juz
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="mt-3 h-1.5 overflow-hidden rounded-full bg-sand-200"
+                >
+                  <div
+                    class="h-full w-[82%] rounded-full bg-gradient-to-r from-primary-500 to-gold-400"
+                  >
+                  </div>
+                </div>
+                <p class="mt-2 text-[0.7rem] text-ink-muted">
+                  Metode Tilawati · 82% siswa on-track
+                </p>
+              </div>
+            </Reveal>
+
+            <!-- Kartu melayang: fasilitas -->
+            <Reveal animation="right" delay={420}>
+              <div
+                class="absolute -right-2 -top-6 hidden items-center gap-2.5 rounded-2xl bg-gold-400 px-4 py-3 shadow-lift md:flex lg:-right-6"
+              >
+                <Icon name="trophy" size={20} class="text-primary-900" />
+                <div class="leading-tight">
+                  <p class="text-[1.05rem] font-extrabold text-primary-900">
+                    180+
+                  </p>
+                  <p
+                    class="text-[0.68rem] font-bold uppercase tracking-wider text-primary-900"
+                  >
+                    Prestasi siswa
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ STRIP KEMITRAAN (MARQUEE) -->
+  <section
+    class="relative border-b border-sand-200 bg-sand-50 py-7"
+    aria-label="Kurikulum & kemitraan"
+  >
+    <div class="mask-fade-x flex overflow-hidden">
+      <div class="flex shrink-0 animate-marquee items-center gap-12 pr-12">
+        {
+          [...partners, ...partners].map((p) => (
+            <span class="flex shrink-0 items-center gap-2.5 whitespace-nowrap text-[0.85rem] font-bold uppercase tracking-wider text-ink-muted">
+              <Icon name="check" size={14} class="text-gold-400" />
+              {p}
+            </span>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= SEKILAS YAYASAN -->
+  <section
+    class="section relative overflow-hidden"
+    aria-labelledby="tentang-singkat"
+  >
+    <Ornament
+      type="blob"
+      class="pointer-events-none absolute -right-40 top-10 h-[34rem] w-[34rem] text-primary-50"
+    />
+
+    <div class="container relative">
+      <div class="grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
+        <div class="relative order-2 lg:order-1 rounded-4xl shadow-lift">
+          <Reveal animation="left">
+            <div class="relative overflow-hidden rounded-4xl">
+              <Image
+                src={img("tentang-yayasan")}
+                alt="Kampus Yayasan Panatagama di Subang"
+                widths={[420, 700, 1000]}
+                sizes="(max-width: 1024px) 90vw, 45vw"
+                class="aspect-[4/5] w-full object-cover md:aspect-[5/5]"
+                loading="lazy"
+              />
+            </div>
+          </Reveal>
+
+          <Reveal animation="up" delay={200}>
+            <div
+              class="absolute -bottom-6 -right-2 w-64 rounded-3xl bg-primary-800 p-6 text-white shadow-lift md:-right-8"
+            >
+              <p
+                class="text-4xl font-extrabold leading-none tracking-tighter text-gold-300"
+              >
+                15+
+              </p>
+              <p class="mt-2 text-[0.85rem] font-semibold leading-snug">
+                tahun mendampingi anak-anak Subang bertumbuh
+              </p>
+            </div>
+          </Reveal>
+        </div>
+
+        <div class="order-1 lg:order-2">
+          <SectionHeading
+            eyebrow="Tentang Kami"
+            title="Satu yayasan, lima unit, satu tujuan yang sama"
+            highlight="lima unit"
+            desc="Yayasan Panatagama berdiri untuk menjawab kebutuhan orang tua di Subang: sekolah Islam yang serius menggarap akhlak, tapi juga tidak tertinggal secara akademik dan teknologi."
+            maxW="max-w-none"
+          />
+
+          <Reveal delay={200}>
+            <div class="mt-9 space-y-5 ps-1 pe-2 py-2">
+              <div
+                class="flex gap-4 rounded-2xl border border-sand-200 bg-white p-5 shadow-md"
+              >
+                <span
+                  class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600"
+                >
+                  <Icon name="eye" size={21} />
+                </span>
+                <div>
+                  <h3 class="font-extrabold text-primary-800">Visi</h3>
+                  <p
+                    class="mt-1.5 text-[0.9375rem] leading-relaxed text-ink-soft"
+                  >
+                    Menjadi lembaga pendidikan Islam modern, sistemik, dan
+                    visioner yang mampu menghasilkan generasi muslim siap
+                    menjadi pemimpin <em>rahmatan lil ’alamin</em>.
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="flex gap-4 rounded-2xl border border-sand-200 bg-white p-5 shadow-md"
+              >
+                <span
+                  class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold-50 text-gold-600"
+                >
+                  <Icon name="target" size={21} />
+                </span>
+                <div>
+                  <h3 class="font-extrabold text-primary-800">Misi</h3>
+                  <p
+                    class="mt-1.5 text-[0.9375rem] leading-relaxed text-ink-soft"
+                  >
+                    Menyelenggarakan pendidikan jenjang KB, TK, SD, SMP, SMA,
+                    hingga perguruan tinggi yang menyiapkan lulusannya unggul
+                    dalam akhlak, ilmu, dan prestasi.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={280}>
+            <div class="mt-8">
+              <Button href="/tentang" variant="primary" icon="arrow-right"
+                >Kenali Yayasan Kami</Button
+              >
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= 5 UNIT -->
+  <section
+    id="unit"
+    class="section relative scroll-mt-24 bg-sand-100"
+    aria-labelledby="unit-heading"
+  >
+    <Ornament type="pattern" class="text-primary-600" opacity={0.035} />
+
+    <div class="container relative">
+      <div
+        class="flex flex-col gap-8 md:flex-row md:items-end md:justify-between"
+      >
+        <SectionHeading
+          eyebrow="Unit Pendidikan & Usaha"
+          title="Pilih jenjang yang tepat untuk ananda"
+          highlight="jenjang yang tepat"
+          desc="Setiap unit punya pendekatan yang disesuaikan usia anak, tapi berpijak pada nilai yang sama."
+        />
+        <Reveal delay={150} class="shrink-0">
+          <Button href="/ppdb" variant="outline" icon="arrow-right"
+            >Bandingkan Jenjang</Button
+          >
+        </Reveal>
+      </div>
+
+      <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          units.map((unit, i) => (
+            <Reveal delay={(i % 3) * 90} class="p-2">
+              <UnitCard unit={unit} class="shadow-md" />
+            </Reveal>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================== NILAI & KEUNGGULAN -->
+  <section
+    class="section relative overflow-hidden bg-primary-900"
+    aria-labelledby="nilai-heading"
+  >
+    <Ornament type="star-grid" class="text-gold-300" opacity={0.05} />
+    <Ornament type="wave-top" class="h-10 text-sand-100 md:h-16" />
+    <div
+      class="pointer-events-none absolute -right-24 top-1/3 h-96 w-96 rounded-full bg-secondary-500/15 blur-[100px]"
+    >
+    </div>
+
+    <div class="container relative pt-10">
+      <SectionHeading
+        eyebrow="Kenapa Panatagama"
+        title="Nilai yang kami tanam setiap hari, bukan sekadar slogan"
+        highlight="setiap hari"
+        desc="Tagline kami — unggul dalam akhlak, ilmu, dan berprestasi — diterjemahkan menjadi kebiasaan konkret yang dijalani anak dari pagi sampai pulang sekolah."
+        align="center"
+        tone="dark"
+        maxW="max-w-3xl"
+      />
+
+      <div class="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          values.map((v, i) => (
+            <Reveal delay={i * 80} class="h-full">
+              <FeatureCard
+                icon={v.icon as any}
+                title={v.title}
+                desc={v.desc}
+                tone="dark"
+                index={i + 1}
+                class="h-full"
+              />
+            </Reveal>
+          ))
+        }
+      </div>
+
+      <!-- Panatagama Habits Forming -->
+      <Reveal delay={120}>
+        <div
+          class="mt-8 grid gap-10 rounded-4xl border border-white/10 bg-white/[0.05] p-8 backdrop-blur-sm md:p-12 lg:grid-cols-12"
+        >
+          <div class="lg:col-span-5">
+            <span class="eyebrow text-gold-300">Panatagama Habits Forming</span>
+            <h3 class="mt-4 text-display-sm text-balance text-white">
+              Karakter dibentuk oleh yang diulang, bukan yang diceramahkan
+            </h3>
+            <p class="mt-5 text-[0.95rem] leading-relaxed text-white/65">
+              Enam kebiasaan ini dijalankan konsisten di semua jenjang, dari KB
+              sampai SMP, dan dilaporkan perkembangannya kepada orang tua.
+            </p>
+          </div>
+
+          <ul class="grid gap-3 sm:grid-cols-2 lg:col-span-7">
+            {
+              habits.map((h, i) => (
+                <li
+                  class="flex items-center gap-3 rounded-2xl border border-white/10 bg-primary-950/30 px-5 py-4 transition-colors duration-300 hover:border-gold-400/40"
+                  style={`--reveal-delay:${i * 60}ms`}
+                >
+                  <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gold-400 text-primary-900">
+                    <Icon name="check" size={14} strokeWidth={2.5} />
+                  </span>
+                  <span class="text-[0.9rem] font-semibold text-white/85">
+                    {h}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </Reveal>
+    </div>
+  </section>
+
+  <!-- ======================================================== STATISTIK -->
+  <StatsBand />
+
+  <!-- ======================================================== FASILITAS -->
+  <section
+    class="section relative overflow-hidden"
+    aria-labelledby="fasilitas-heading"
+  >
+    <div class="container">
+      <div class="grid gap-14 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-5">
+          <SectionHeading
+            eyebrow="Fasilitas"
+            title="Ruang belajar yang aman, nyaman, dan siap pakai"
+            highlight="aman, nyaman"
+            desc="Semua kelas ber-AC dan terpantau CCTV. Anak punya ruang untuk bergerak, bereksperimen, dan beribadah dengan tenang."
+            maxW="max-w-none"
+          />
+
+          <Reveal delay={200}>
+            <div class="mt-9 overflow-hidden rounded-3xl">
+              <Image
+                src={img("tentang-kegiatan")}
+                alt="Fasilitas dan kegiatan siswa Panatagama Islamic School"
+                widths={[420, 700, 1000]}
+                sizes="(max-width: 1024px) 90vw, 38vw"
+                class="aspect-[4/3] w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          </Reveal>
+        </div>
+
+        <div class="lg:col-span-7">
+          <div class="grid gap-3 sm:grid-cols-2">
+            {
+              facilities.map((f, i) => (
+                <Reveal delay={(i % 4) * 60} class="p-2">
+                  <div class="group flex items-center gap-3.5 rounded-2xl border border-sand-200 bg-white px-5 py-4 transition-all duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md">
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600 transition-colors duration-300 group-hover:bg-primary-600 group-hover:text-white">
+                      <Icon name={f.icon as any} size={19} />
+                    </span>
+                    <span class="text-[0.9rem] font-bold text-primary-800">
+                      {f.label}
+                    </span>
+                  </div>
+                </Reveal>
+              ))
+            }
+          </div>
+
+          <Reveal delay={200}>
+            <div
+              class="mt-6 rounded-3xl border border-gold-200 bg-gold-50 p-6 md:p-7"
+            >
+              <p
+                class="flex items-center gap-2 text-[0.8rem] font-extrabold uppercase tracking-wider text-gold-600"
+              >
+                <Icon name="handshake" size={16} />
+                Member of Panatagama Group
+              </p>
+              <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                {
+                  groupPartners.map((p) => (
+                    <div>
+                      <p class="text-[0.9rem] font-extrabold text-primary-800">
+                        {p.name}
+                      </p>
+                      <p class="text-[0.8rem] leading-snug text-ink-muted">
+                        {p.desc}
+                      </p>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================== GALERI -->
+  <section
+    class="section relative bg-sand-100"
+    aria-labelledby="galeri-heading"
+  >
+    <div class="container">
+      <div
+        class="flex flex-col gap-8 md:flex-row md:items-end md:justify-between"
+      >
+        <SectionHeading
+          eyebrow="Galeri Kegiatan"
+          title="Sehari-hari di Panatagama"
+          highlight="Sehari-hari"
+          desc="Bukan foto stok — ini kegiatan yang benar-benar dijalani anak-anak kami sepanjang tahun ajaran."
+        />
+        <Reveal delay={150} class="shrink-0">
+          <Button
+            href={contact.social.instagram.url}
+            variant="outline"
+            icon="instagram"
+            iconPosition="left"
+            external
+          >
+            Lihat di Instagram
+          </Button>
+        </Reveal>
+      </div>
+
+      <GalleryGrid items={galleryItems} class="mt-14" />
+    </div>
+  </section>
+
+  <!-- ======================================================= TESTIMONI -->
+  <section
+    class="section relative overflow-hidden"
+    aria-labelledby="testimoni-heading"
+  >
+    <Ornament
+      type="blob"
+      class="pointer-events-none absolute -left-48 top-20 h-[32rem] w-[32rem] text-gold-50"
+    />
+
+    <div class="container relative">
+      <SectionHeading
+        eyebrow="Kata Wali Murid"
+        title="Yang orang tua rasakan setelah anaknya sekolah di sini"
+        highlight="orang tua rasakan"
+        align="center"
+        maxW="max-w-3xl"
+      />
+
+      <div class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {
+          testimonials.slice(0, 6).map((t, i) => (
+            <Reveal delay={(i % 3) * 90} class="h-full p-3">
+              <TestimonialCard item={t} class="h-full" />
+            </Reveal>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================== BERITA -->
+  <section
+    class="section relative bg-sand-100"
+    aria-labelledby="berita-heading"
+  >
+    <div class="container">
+      <div
+        class="flex flex-col gap-8 md:flex-row md:items-end md:justify-between"
+      >
+        <SectionHeading
+          eyebrow="Berita & Kegiatan"
+          title="Kabar terbaru dari sekolah"
+          highlight="terbaru"
+          desc="Prestasi siswa, agenda sekolah, dan tulisan seputar pengasuhan."
+        />
+        <Reveal delay={150} class="shrink-0">
+          <Button href="/berita" variant="outline" icon="arrow-right"
+            >Semua Berita</Button
+          >
+        </Reveal>
+      </div>
+
+      <div class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {
+          featuredPosts.map((p, i) => (
+            <Reveal delay={(i % 3) * 90} class="h-full p-2">
+              <NewsCard post={p} class="h-full" />
+            </Reveal>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= CTA -->
+  <CtaBand />
+</BaseLayout>

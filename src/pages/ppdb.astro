@@ -1,0 +1,576 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Accordion from '../components/Accordion.astro';
+import Reveal from '../components/Reveal.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import Ornament from '../components/Ornament.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site, contact, whatsappContacts, waLink } from '../data/site';
+import { schoolUnits } from '../data/units';
+import { waves, steps, requirements, ppdbFaq } from '../data/ppdb';
+---
+
+<BaseLayout
+  title="SPMB 2027/2028"
+  description="Alur pendaftaran, syarat berkas, dan jadwal gelombang SPMB Panatagama Islamic School tahun ajaran 2027/2028. Daftar online atau via WhatsApp."
+>
+  <PageHero
+    eyebrow={`SPMB Tahun Ajaran ${site.academicYear}`}
+    title="Pendaftaran murid baru telah dibuka"
+    highlight="telah dibuka"
+    desc="Prosesnya sederhana dan tidak menegangkan untuk anak. Ikuti enam langkah berikut, atau hubungi kami dulu bila ada yang ingin dipastikan."
+    image="ppdb-hero"
+    breadcrumbs={[{ label: 'SPMB' }]}
+  >
+    <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+      <Button href="#formulir" variant="secondary" size="lg" icon="arrow-down" iconPosition="right">
+        Isi Formulir Pendaftaran
+      </Button>
+      <Button
+        href={site.spmbUrl}
+        variant="outline"
+        size="lg"
+        icon="external-link"
+        external
+        class="!border-white/25 !bg-white/5 !text-white hover:!border-white/60 hover:!bg-white/10"
+      >
+        Portal SPMB Resmi
+      </Button>
+    </div>
+  </PageHero>
+
+  <!-- ======================================================= GELOMBANG -->
+  <section class="section relative overflow-hidden" aria-labelledby="gelombang">
+    <Ornament type="blob" class="pointer-events-none absolute -left-52 top-24 h-[34rem] w-[34rem] text-primary-50" />
+
+    <div class="container relative">
+      <SectionHeading
+        eyebrow="Jadwal Pendaftaran"
+        title="Tiga gelombang, semakin awal semakin ringan"
+        highlight="semakin awal"
+        desc="Kuota paling lapang dan pilihan jadwal observasi paling fleksibel ada di gelombang pertama."
+        align="center"
+        maxW="max-w-2xl"
+      />
+
+      <div class="mt-14 grid gap-6 lg:grid-cols-3">
+        {
+          waves.map((w, i) => {
+            const open = w.status === 'Dibuka';
+            return (
+              <Reveal delay={i * 100} class="h-full">
+                <article
+                  class:list={[
+                    'relative flex h-full flex-col overflow-hidden rounded-4xl p-8 transition-all duration-500 ease-out-expo hover:-translate-y-1.5',
+                    open
+                      ? 'bg-primary-800 text-white shadow-lift'
+                      : 'border border-sand-200 bg-white shadow-soft hover:shadow-lift',
+                  ]}
+                >
+                  {open && <Ornament type="star-grid" class="text-gold-300" opacity={0.07} />}
+
+                  <div class="relative flex items-center justify-between gap-3">
+                    <h3 class={`text-xl font-extrabold tracking-tight ${open ? 'text-white' : 'text-primary-800'}`}>
+                      {w.name}
+                    </h3>
+                    <span
+                      class:list={[
+                        'shrink-0 rounded-full px-3 py-1.5 text-[0.68rem] font-extrabold uppercase tracking-wider',
+                        open ? 'bg-gold-400 text-primary-900' : 'bg-sand-100 text-ink-muted',
+                      ]}
+                    >
+                      {w.status}
+                    </span>
+                  </div>
+
+                  <p class={`relative mt-3 text-[0.9rem] font-semibold ${open ? 'text-white/65' : 'text-ink-muted'}`}>
+                    {w.period}
+                  </p>
+
+                  <p
+                    class={`relative mt-6 text-2xl font-extrabold tracking-tight ${open ? 'text-gold-300' : 'text-secondary-600'}`}
+                  >
+                    {w.highlight}
+                  </p>
+
+                  <ul class="relative mt-6 flex-1 space-y-3">
+                    {w.perks.map((p) => (
+                      <li class="flex items-start gap-2.5">
+                        <span
+                          class:list={[
+                            'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full',
+                            open ? 'bg-gold-400 text-primary-900' : 'bg-primary-50 text-primary-600',
+                          ]}
+                        >
+                          <Icon name="check" size={12} strokeWidth={2.5} />
+                        </span>
+                        <span class={`text-[0.9rem] ${open ? 'text-white/80' : 'text-ink-soft'}`}>{p}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {open && (
+                    <div class="relative mt-8">
+                      <Button href="#formulir" variant="gold" fullWidth icon="arrow-right">
+                        Daftar Gelombang Ini
+                      </Button>
+                    </div>
+                  )}
+                </article>
+              </Reveal>
+            );
+          })
+        }
+      </div>
+
+      <Reveal delay={120}>
+        <p class="mx-auto mt-8 flex max-w-3xl items-start gap-2.5 rounded-2xl border border-gold-200 bg-gold-50 px-5 py-4 text-[0.85rem] text-gold-700">
+          <Icon name="lightbulb" size={17} class="mt-px shrink-0" />
+          <span>
+            <strong class="font-bold">Catatan editor:</strong> tanggal tiap gelombang masih data contoh.
+            Samakan dengan SK panitia SPMB sebelum website dipublikasikan.
+          </span>
+        </p>
+      </Reveal>
+    </div>
+  </section>
+
+  <!-- ============================================================ ALUR -->
+  <section class="section relative overflow-hidden bg-primary-900" aria-labelledby="alur">
+    <Ornament type="pattern" class="text-white" opacity={0.05} />
+    <Ornament type="wave-top" class="h-10 text-sand-50 md:h-16" />
+
+    <div class="container relative pt-10">
+      <SectionHeading
+        eyebrow="Alur Pendaftaran"
+        title="Enam langkah, selesai dalam hitungan hari"
+        highlight="Enam langkah"
+        desc="Tidak ada tes calistung yang menegangkan. Kami hanya perlu mengenal ananda agar bisa mendampinginya dengan tepat sejak hari pertama."
+        align="center"
+        tone="dark"
+        maxW="max-w-2xl"
+      />
+
+      <ol class="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          steps.map((s, i) => (
+            <Reveal as="li" delay={(i % 3) * 90} class="h-full">
+              <div class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] p-7 backdrop-blur-sm transition-all duration-500 ease-out-expo hover:-translate-y-1.5 hover:border-gold-400/40 hover:bg-white/[0.1]">
+                <span
+                  class="pointer-events-none absolute -right-2 -top-4 text-[5rem] font-extrabold leading-none tracking-tighter text-white/[0.05] transition-colors duration-500 group-hover:text-white/[0.09]"
+                  aria-hidden="true"
+                >
+                  {s.n}
+                </span>
+                <span class="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gold-400/15 text-gold-300 transition-all duration-500 ease-out-expo group-hover:scale-105 group-hover:-rotate-6">
+                  <Icon name={s.icon as any} size={23} />
+                </span>
+                <h3 class="relative mt-6 text-lg font-extrabold tracking-tight text-white">{s.title}</h3>
+                <p class="relative mt-2.5 text-[0.9375rem] leading-relaxed text-white/65">{s.desc}</p>
+              </div>
+            </Reveal>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ========================================================== SYARAT -->
+  <section class="section" aria-labelledby="syarat">
+    <div class="container">
+      <SectionHeading
+        eyebrow="Persyaratan"
+        title="Berkas yang perlu disiapkan"
+        highlight="perlu disiapkan"
+        desc="Salinan berkas bisa diunggah lewat portal SPMB atau diserahkan langsung ke panitia di kampus."
+        align="center"
+        maxW="max-w-2xl"
+      />
+
+      <div class="mt-14 grid gap-6 md:grid-cols-2">
+        {
+          requirements.map((r, i) => (
+            <Reveal delay={(i % 2) * 90} class="h-full">
+              <div class="flex h-full flex-col rounded-4xl border border-sand-200 bg-white p-8 shadow-soft transition-all duration-500 ease-out-expo hover:-translate-y-1 hover:border-primary-200 hover:shadow-lift">
+                <div class="flex items-center gap-3">
+                  <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white">
+                    <Icon name="folder-check" size={20} />
+                  </span>
+                  <h3 class="text-xl font-extrabold tracking-tight text-primary-800">{r.unit}</h3>
+                </div>
+
+                <p class="mt-5 rounded-2xl bg-sand-50 px-4 py-3 text-[0.85rem] font-semibold text-ink-soft">
+                  <span class="text-ink-muted">Ketentuan usia:</span> {r.age}
+                </p>
+
+                <ul class="mt-5 flex-1 space-y-2.5">
+                  {r.docs.map((d) => (
+                    <li class="flex items-start gap-2.5">
+                      <Icon name="check" size={15} class="mt-0.5 shrink-0 text-gold-600" strokeWidth={2.5} />
+                      <span class="text-[0.9rem] leading-relaxed text-ink-soft">{d}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= PERBANDINGAN UNIT -->
+  <section class="section bg-sand-100" aria-labelledby="banding-jenjang">
+    <div class="container">
+      <SectionHeading
+        eyebrow="Perbandingan Jenjang"
+        title="Menemukan jenjang yang pas untuk ananda"
+        highlight="yang pas"
+        desc="Ringkasan usia, daya tampung, dan jam belajar tiap jenjang agar Anda bisa membandingkan dengan cepat."
+        align="center"
+        maxW="max-w-2xl"
+      />
+
+      <Reveal delay={120}>
+        <div class="mt-14 overflow-hidden rounded-4xl border border-sand-200 bg-white shadow-soft">
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[46rem] text-left">
+              <caption class="sr-only">Perbandingan jenjang, daya tampung, dan jam belajar</caption>
+              <thead>
+                <tr class="border-b border-sand-200 bg-primary-800 text-white">
+                  <th scope="col" class="px-6 py-5 text-[0.75rem] font-extrabold uppercase tracking-wider md:px-8">
+                    Jenjang
+                  </th>
+                  <th scope="col" class="px-6 py-5 text-[0.75rem] font-extrabold uppercase tracking-wider">
+                    Daya Tampung
+                  </th>
+                  <th scope="col" class="px-6 py-5 text-[0.75rem] font-extrabold uppercase tracking-wider">
+                    Jam Belajar
+                  </th>
+                  <th scope="col" class="px-6 py-5 text-right text-[0.75rem] font-extrabold uppercase tracking-wider md:px-8">
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  schoolUnits.map((u) => (
+                    <tr class="border-b border-sand-200 transition-colors duration-300 last:border-0 hover:bg-sand-50">
+                      <th scope="row" class="px-6 py-5 md:px-8">
+                        <span class="block text-[0.95rem] font-extrabold text-primary-800">{u.name}</span>
+                        <span class="mt-0.5 block text-[0.78rem] font-medium text-ink-muted">{u.ageRange}</span>
+                      </th>
+                      <td class="px-6 py-5 text-[0.875rem] leading-snug text-ink-soft">{u.quota}</td>
+                      <td class="px-6 py-5 text-[0.875rem] leading-snug text-ink-soft">
+                        {u.schedule.slice(0, 2).map((s) => (
+                          <span class="block">
+                            <span class="font-semibold text-primary-800">{s.label}</span> · {s.time}
+                          </span>
+                        ))}
+                      </td>
+                      <td class="whitespace-nowrap px-6 py-5 text-right md:px-8">
+                        <a
+                          href={`/unit/${u.slug}`}
+                          class="inline-flex items-center gap-1.5 rounded-full border border-sand-200 px-4 py-2 text-[0.8rem] font-bold text-primary-700 transition-all duration-300 hover:border-primary-600 hover:bg-primary-600 hover:text-white"
+                        >
+                          Detail
+                          <Icon name="arrow-right" size={13} />
+                        </a>
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </Reveal>
+
+      <Reveal delay={140}>
+        <p class="mx-auto mt-6 flex max-w-3xl items-start gap-2.5 rounded-2xl border border-primary-100 bg-primary-50 px-5 py-4 text-[0.85rem] text-primary-800">
+          <Icon name="message-circle" size={17} class="mt-px shrink-0" />
+          <span>
+            Untuk hal-hal yang perlu dibicarakan lebih personal, silakan hubungi panitia SPMB jenjang
+            terkait melalui WhatsApp — kami siap menjelaskannya langsung kepada Anda.
+          </span>
+        </p>
+      </Reveal>
+    </div>
+  </section>
+
+  <!-- ======================================================== FORMULIR -->
+  <section id="formulir" class="section scroll-mt-24" aria-labelledby="formulir-heading">
+    <div class="container">
+      <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-5">
+          <SectionHeading
+            eyebrow="Formulir Pendaftaran"
+            title="Isi data singkat, kami yang menghubungi Anda"
+            highlight="kami yang menghubungi"
+            desc="Formulir ini akan menyiapkan pesan WhatsApp berisi data ananda ke admin jenjang yang Anda pilih. Anda tinggal menekan kirim."
+            maxW="max-w-none"
+          />
+
+          <Reveal delay={200}>
+            <div class="mt-9 space-y-4">
+              <div class="rounded-3xl border border-sand-200 bg-white p-6 shadow-soft">
+                <h3 class="flex items-center gap-2 text-[0.95rem] font-extrabold text-primary-800">
+                  <Icon name="whatsapp" size={17} class="text-secondary-500" />
+                  Kontak admin per jenjang
+                </h3>
+                <ul class="mt-4 space-y-2.5">
+                  {
+                    whatsappContacts.map((w) => (
+                      <li>
+                        <a
+                          href={waLink(w.number, `Assalamu'alaikum, saya ingin bertanya mengenai SPMB ${w.unit}.`)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="flex items-center justify-between rounded-xl px-3 py-2.5 transition-colors duration-200 hover:bg-primary-50"
+                        >
+                          <span class="text-[0.9rem] font-bold text-primary-800">{w.unit}</span>
+                          <span class="flex items-center gap-1.5 text-[0.85rem] font-semibold text-ink-soft">
+                            {w.label}
+                            <Icon name="arrow-up-right" size={14} class="text-secondary-500" />
+                          </span>
+                        </a>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+
+              <div class="rounded-3xl border border-primary-100 bg-primary-50 p-6">
+                <h3 class="flex items-center gap-2 text-[0.95rem] font-extrabold text-primary-800">
+                  <Icon name="clock" size={17} />
+                  Jam layanan
+                </h3>
+                <p class="mt-2 text-[0.9rem] text-ink-soft">{contact.officeHours}</p>
+                <p class="mt-3 text-[0.85rem] text-ink-muted">
+                  Pesan di luar jam kerja tetap kami terima dan dibalas pada hari kerja berikutnya.
+                </p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+
+        <div class="lg:col-span-7">
+          <Reveal animation="right">
+            <form
+              id="form-spmb"
+              class="rounded-4xl border border-sand-200 bg-white p-7 shadow-soft md:p-10"
+              novalidate
+            >
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                  <label for="nama-anak" class="block text-[0.85rem] font-bold text-primary-800">
+                    Nama lengkap calon siswa <span class="text-secondary-600">*</span>
+                  </label>
+                  <input
+                    id="nama-anak"
+                    name="nama-anak"
+                    type="text"
+                    required
+                    autocomplete="off"
+                    placeholder="Contoh: Ahmad Zaidan Alfarizi"
+                    class="mt-2 w-full rounded-2xl border border-sand-200 bg-sand-50 px-5 py-3.5 text-[0.9375rem] text-ink transition-all duration-300 placeholder:text-ink-muted/60 focus:border-primary-400 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label for="jenjang" class="block text-[0.85rem] font-bold text-primary-800">
+                    Jenjang yang dituju <span class="text-secondary-600">*</span>
+                  </label>
+                  <select
+                    id="jenjang"
+                    name="jenjang"
+                    required
+                    class="mt-2 w-full rounded-2xl border border-sand-200 bg-sand-50 px-5 py-3.5 text-[0.9375rem] text-ink transition-all duration-300 focus:border-primary-400 focus:bg-white"
+                  >
+                    <option value="">— Pilih jenjang —</option>
+                    {
+                      schoolUnits.map((u) => (
+                        <option value={u.slug} data-wa={u.wa.number}>
+                          {u.name} ({u.ageRange})
+                        </option>
+                      ))
+                    }
+                  </select>
+                </div>
+
+                <div>
+                  <label for="usia" class="block text-[0.85rem] font-bold text-primary-800">
+                    Usia calon siswa
+                  </label>
+                  <input
+                    id="usia"
+                    name="usia"
+                    type="text"
+                    inputmode="numeric"
+                    placeholder="Contoh: 6 tahun"
+                    class="mt-2 w-full rounded-2xl border border-sand-200 bg-sand-50 px-5 py-3.5 text-[0.9375rem] text-ink transition-all duration-300 placeholder:text-ink-muted/60 focus:border-primary-400 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label for="nama-ortu" class="block text-[0.85rem] font-bold text-primary-800">
+                    Nama orang tua / wali <span class="text-secondary-600">*</span>
+                  </label>
+                  <input
+                    id="nama-ortu"
+                    name="nama-ortu"
+                    type="text"
+                    required
+                    autocomplete="name"
+                    placeholder="Nama Anda"
+                    class="mt-2 w-full rounded-2xl border border-sand-200 bg-sand-50 px-5 py-3.5 text-[0.9375rem] text-ink transition-all duration-300 placeholder:text-ink-muted/60 focus:border-primary-400 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label for="telepon" class="block text-[0.85rem] font-bold text-primary-800">
+                    Nomor WhatsApp aktif <span class="text-secondary-600">*</span>
+                  </label>
+                  <input
+                    id="telepon"
+                    name="telepon"
+                    type="tel"
+                    required
+                    autocomplete="tel"
+                    inputmode="tel"
+                    placeholder="08xx-xxxx-xxxx"
+                    class="mt-2 w-full rounded-2xl border border-sand-200 bg-sand-50 px-5 py-3.5 text-[0.9375rem] text-ink transition-all duration-300 placeholder:text-ink-muted/60 focus:border-primary-400 focus:bg-white"
+                  />
+                </div>
+
+                <div class="sm:col-span-2">
+                  <label for="pesan" class="block text-[0.85rem] font-bold text-primary-800">
+                    Pertanyaan atau catatan tambahan
+                  </label>
+                  <textarea
+                    id="pesan"
+                    name="pesan"
+                    rows="4"
+                    placeholder="Misalnya: ingin menjadwalkan kunjungan, menanyakan rute shuttle, atau kebutuhan khusus ananda."
+                    class="mt-2 w-full resize-y rounded-2xl border border-sand-200 bg-sand-50 px-5 py-3.5 text-[0.9375rem] text-ink transition-all duration-300 placeholder:text-ink-muted/60 focus:border-primary-400 focus:bg-white"
+                  ></textarea>
+                </div>
+              </div>
+
+              <p
+                id="form-error"
+                class="mt-5 hidden items-start gap-2 rounded-2xl border border-secondary-200 bg-secondary-50 px-4 py-3 text-[0.85rem] font-semibold text-secondary-700"
+                role="alert"
+              >
+                <span>Mohon lengkapi kolom bertanda <span aria-hidden="true">*</span> terlebih dahulu.</span>
+              </p>
+
+              <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+                <Button type="submit" variant="secondary" size="lg" icon="whatsapp" iconPosition="left" class="sm:flex-1">
+                  Kirim via WhatsApp
+                </Button>
+                <Button href={site.spmbUrl} variant="outline" size="lg" icon="external-link" external>
+                  Portal SPMB
+                </Button>
+              </div>
+
+              <p class="mt-5 text-[0.8rem] leading-relaxed text-ink-muted">
+                Dengan menekan tombol di atas, aplikasi WhatsApp Anda akan terbuka berisi ringkasan data
+                di formulir ini. Tidak ada data yang disimpan di server website.
+              </p>
+            </form>
+          </Reveal>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ FAQ -->
+  <section class="section bg-sand-100" aria-labelledby="faq-spmb">
+    <div class="container">
+      <SectionHeading
+        eyebrow="Pertanyaan Umum"
+        title="Hal yang paling sering ditanyakan orang tua"
+        highlight="paling sering"
+        align="center"
+        maxW="max-w-2xl"
+      />
+      <div class="mx-auto mt-14 max-w-3xl">
+        <Accordion items={ppdbFaq} />
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Masih ada yang ingin dipastikan?"
+    desc="Tanyakan apa pun sebelum mendaftar — soal kurikulum, rute jemputan, jadwal harian, atau kebutuhan khusus ananda. Tidak ada pertanyaan yang terlalu kecil."
+    primaryLabel="Isi Formulir"
+    primaryHref="#formulir"
+  />
+</BaseLayout>
+
+<script>
+  function initForm() {
+    const form = document.querySelector<HTMLFormElement>('#form-spmb');
+    if (!form) return;
+
+    // `astro:page-load` juga menyala saat pemuatan awal — tanpa penjaga ini
+    // handler terpasang dua kali dan WhatsApp terbuka dua tab.
+    if (form.dataset.bound === '1') return;
+    form.dataset.bound = '1';
+
+    const err = form.querySelector<HTMLElement>('#form-error');
+    const fallback = '6285179538448'; // WhatsApp informasi umum
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const val = (id: string) =>
+        (form.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(`#${id}`)?.value ?? '').trim();
+
+      const anak = val('nama-anak');
+      const jenjangSelect = form.querySelector<HTMLSelectElement>('#jenjang');
+      const jenjang = jenjangSelect?.value ?? '';
+      const ortu = val('nama-ortu');
+      const telepon = val('telepon');
+
+      const missing = !anak || !jenjang || !ortu || !telepon;
+      err?.classList.toggle('hidden', !missing);
+      err?.classList.toggle('flex', missing);
+      if (missing) {
+        const first = [
+          !anak && '#nama-anak',
+          !jenjang && '#jenjang',
+          !ortu && '#nama-ortu',
+          !telepon && '#telepon',
+        ].find(Boolean) as string;
+        form.querySelector<HTMLElement>(first)?.focus();
+        return;
+      }
+
+      const opt = jenjangSelect!.selectedOptions[0];
+      const number = opt?.dataset.wa || fallback;
+      const jenjangLabel = opt?.textContent?.trim() ?? jenjang;
+
+      const lines = [
+        "Assalamu'alaikum, saya ingin mendaftarkan anak saya pada SPMB Panatagama Islamic School.",
+        '',
+        `Nama calon siswa: ${anak}`,
+        `Jenjang dituju: ${jenjangLabel}`,
+      ];
+      const usia = val('usia');
+      if (usia) lines.push(`Usia: ${usia}`);
+      lines.push(`Nama orang tua/wali: ${ortu}`, `Nomor WhatsApp: ${telepon}`);
+      const pesan = val('pesan');
+      if (pesan) lines.push('', `Catatan: ${pesan}`);
+
+      window.open(`https://wa.me/${number}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+    });
+  }
+
+  initForm();
+  document.addEventListener('astro:page-load', initForm);
+</script>

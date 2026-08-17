@@ -1,0 +1,373 @@
+---
+import { Image } from "astro:assets";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import NewsCard from "../../components/NewsCard.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import Reveal from "../../components/Reveal.astro";
+import Button from "../../components/Button.astro";
+import Icon from "../../components/Icon.astro";
+import Ornament from "../../components/Ornament.astro";
+import { resolveCover } from "../../lib/images";
+import { formatDate } from "../../data/news";
+import { getAllPosts } from "../../lib/wordpress";
+import { site, contact } from "../../data/site";
+
+// Sebelumnya: getStaticPaths sinkron baca dari array statis `posts`.
+// Sekarang: async, fetch semua berita dari WordPress sekali saat build,
+// lalu generate satu halaman per slug. `allPosts` dikirim lewat props
+// supaya tidak perlu fetch ulang untuk hitung "related".
+export async function getStaticPaths() {
+  const allPosts = await getAllPosts();
+  return allPosts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post, allPosts },
+  }));
+}
+
+const { post, allPosts } = Astro.props;
+const related = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3);
+const url = new URL(`/berita/${post.slug}`, site.url).href;
+
+const categoryTone: Record<string, string> = {
+  Prestasi: "bg-gold-400 text-primary-900",
+  Kegiatan: "bg-primary-600 text-white",
+  Pengumuman: "bg-secondary-500 text-white",
+  Parenting: "bg-white/15 text-white",
+};
+
+const share = [
+  {
+    name: "whatsapp" as const,
+    label: "Bagikan ke WhatsApp",
+    href: `https://wa.me/?text=${encodeURIComponent(`${post.title} — ${url}`)}`,
+  },
+  {
+    name: "facebook" as const,
+    label: "Bagikan ke Facebook",
+    href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+  },
+  {
+    name: "mail" as const,
+    label: "Bagikan lewat email",
+    href: `mailto:?subject=${encodeURIComponent(post.title)}&body=${encodeURIComponent(url)}`,
+  },
+];
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  headline: post.title,
+  description: post.excerpt,
+  datePublished: post.date,
+  author: { "@type": "Organization", name: post.author },
+  publisher: { "@type": "Organization", name: site.name },
+  mainEntityOfPage: url,
+};
+
+// Gambar hero (background) & gambar utama artikel pakai cover yang sama,
+// tapi ukuran tampilan beda -> resolve sekali, dipakai dua kali.
+const heroCover = resolveCover(post.cover, post.coverWidth, post.coverHeight);
+---
+
+<BaseLayout title={post.title} description={post.excerpt} type="article">
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify(schema)}
+    slot="head"
+  />
+
+  <!-- =========================================================== HERO -->
+  <article>
+    <header
+      class="relative overflow-hidden bg-primary-900 pb-24 pt-36 md:pb-28 md:pt-44"
+    >
+      <div class="absolute inset-0">
+        <Image
+          src={heroCover.src}
+          width={heroCover.width}
+          height={heroCover.height}
+          alt=""
+          widths={[800, 1400, 1920]}
+          sizes="100vw"
+          class="h-full w-full object-cover opacity-25"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-primary-950 via-primary-900/90 to-primary-900/70"
+        >
+        </div>
+      </div>
+      <Ornament type="pattern" class="text-white" opacity={0.05} />
+      <Ornament type="wave-bottom" class="h-10 text-sand-50 md:h-16" />
+
+      <div class="container relative">
+        <Reveal>
+          <nav aria-label="Breadcrumb">
+            <ol
+              class="flex flex-wrap items-center gap-1.5 text-[0.8rem] font-semibold text-white/50"
+            >
+              <li>
+                <a href="/" class="transition-colors hover:text-gold-300"
+                  >Beranda</a>
+              </li>
+              <li class="flex items-center gap-1.5">
+                <Icon name="chevron-right" size={12} class="text-white/25" />
+                <a href="/berita" class="transition-colors hover:text-gold-300"
+                  >Berita</a
+                >
+              </li>
+              <li class="flex items-center gap-1.5">
+                <Icon name="chevron-right" size={12} class="text-white/25" />
+                <span class="text-white/80">{post.category}</span>
+              </li>
+            </ol>
+          </nav>
+        </Reveal>
+
+        <div class="mt-7 max-w-3xl">
+          <Reveal delay={60}>
+            <span
+              class={`inline-block rounded-full px-4 py-2 text-[0.7rem] font-extrabold uppercase tracking-wider ${categoryTone[post.category]}`}
+            >
+              {post.category}
+            </span>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <h1 class="mt-6 text-display-lg text-balance text-white">
+              {post.title}
+            </h1>
+          </Reveal>
+
+          <Reveal delay={190}>
+            <div
+              class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[0.85rem] font-semibold text-white/55"
+            >
+              <span class="flex items-center gap-2">
+                <Icon name="user" size={15} class="text-gold-300" />{
+                  post.author
+                }
+              </span>
+              <time datetime={post.date} class="flex items-center gap-2">
+                <Icon name="calendar" size={15} class="text-gold-300" />{
+                  formatDate(post.date)
+                }
+              </time>
+              <span class="flex items-center gap-2">
+                <Icon name="clock" size={15} class="text-gold-300" />{
+                  post.readingTime
+                } menit baca
+              </span>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </header>
+
+    <!-- ======================================================== ISI -->
+    <div class="section-tight pt-16 md:pt-20">
+      <div class="container">
+        <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div class="lg:col-span-8">
+            <Reveal>
+              <div class="overflow-hidden rounded-4xl shadow-soft">
+                <Image
+                  src={heroCover.src}
+                  width={heroCover.width}
+                  height={heroCover.height}
+                  alt={post.title}
+                  widths={[600, 1000, 1400]}
+                  sizes="(max-width: 1024px) 92vw, 62vw"
+                  class="aspect-[16/10] w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            </Reveal>
+
+            <Reveal delay={80}>
+              <p
+                class="prose-panata mt-10 border-l-4 border-gold-400 pl-6 text-lead font-semibold !text-primary-800"
+              >
+                {post.excerpt}
+              </p>
+            </Reveal>
+
+            <!--
+              Konten dari WordPress berupa HTML mentah (block editor),
+              bukan array paragraf string seperti versi statis sebelumnya.
+              Dirender langsung lewat set:html.
+              PENTING: konten ini datang dari CMS internal yang dipercaya
+              (tim sendiri yang menulis di wp-admin), bukan input publik,
+              jadi aman dirender sebagai HTML.
+            -->
+            <Reveal delay={120}>
+              <div class="prose-panata mt-8" set:html={post.content} />
+            </Reveal>
+
+            <!-- Bagikan -->
+            <Reveal delay={140}>
+              <div
+                class="mt-12 flex flex-wrap items-center gap-4 border-t border-sand-200 pt-8"
+              >
+                <span
+                  class="text-[0.85rem] font-extrabold uppercase tracking-wider text-ink-muted"
+                >
+                  Bagikan
+                </span>
+                <div class="flex gap-2.5">
+                  {
+                    share.map((s) => (
+                      <a
+                        href={s.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={s.label}
+                        class="flex h-11 w-11 items-center justify-center rounded-full border border-sand-200 bg-white text-primary-700 transition-all duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-primary-600 hover:bg-primary-600 hover:text-white"
+                      >
+                        <Icon name={s.name} size={18} />
+                      </a>
+                    ))
+                  }
+                </div>
+                <Button
+                  href="/berita"
+                  variant="ghost"
+                  size="sm"
+                  icon="arrow-left"
+                  iconPosition="left"
+                  class="ml-auto"
+                >
+                  Semua berita
+                </Button>
+              </div>
+            </Reveal>
+          </div>
+
+          <!-- Sidebar -->
+          <aside class="lg:col-span-4">
+            <div class="lg:sticky lg:top-28">
+              <Reveal animation="right">
+                <div
+                  class="relative overflow-hidden rounded-4xl bg-primary-800 p-7 text-white"
+                >
+                  <Ornament
+                    type="star-grid"
+                    class="text-gold-300"
+                    opacity={0.07}
+                  />
+                  <div class="relative">
+                    <span class="eyebrow text-gold-300"
+                      >SPMB {site.academicYear}</span
+                    >
+                    <h2
+                      class="mt-4 text-xl font-extrabold leading-snug tracking-tight"
+                    >
+                      Tertarik menyekolahkan ananda di Panatagama?
+                    </h2>
+                    <p class="mt-3 text-[0.9rem] leading-relaxed text-white/65">
+                      Pendaftaran gelombang 1 sedang berlangsung selagi kuota
+                      tiap jenjang masih lapang.
+                    </p>
+                    <div class="mt-6 flex flex-col gap-3">
+                      <Button
+                        href="/ppdb"
+                        variant="gold"
+                        fullWidth
+                        icon="arrow-right">Lihat Info SPMB</Button
+                      >
+                      <Button
+                        href={`https://wa.me/${contact.mainWhatsApp.number}`}
+                        variant="outline"
+                        fullWidth
+                        icon="whatsapp"
+                        iconPosition="left"
+                        external
+                        class="!border-white/25 !bg-white/5 !text-white hover:!border-white/60 hover:!bg-white/10"
+                      >
+                        Tanya Admin
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+
+              <Reveal animation="right" delay={100}>
+                <div
+                  class="mt-5 rounded-4xl border border-sand-200 bg-white p-7 shadow-soft"
+                >
+                  <h2
+                    class="text-[0.85rem] font-extrabold uppercase tracking-wider text-ink-muted"
+                  >
+                    Tulisan lainnya
+                  </h2>
+                  <ul class="mt-5 space-y-5">
+                    {
+                      related.map((r) => {
+                        const thumb = resolveCover(
+                          r.cover,
+                          r.coverWidth,
+                          r.coverHeight,
+                        );
+                        return (
+                          <li>
+                            <a
+                              href={`/berita/${r.slug}`}
+                              class="group flex gap-4"
+                            >
+                              <span class="h-16 w-16 shrink-0 overflow-hidden rounded-xl">
+                                <Image
+                                  src={thumb.src}
+                                  width={thumb.width}
+                                  height={thumb.height}
+                                  alt=""
+                                  widths={[128, 256]}
+                                  sizes="64px"
+                                  class="h-full w-full object-cover transition-transform duration-500 ease-out-expo group-hover:scale-110"
+                                  loading="lazy"
+                                />
+                              </span>
+                              <span class="min-w-0">
+                                <span class="line-clamp-2 text-[0.9rem] font-bold leading-snug text-primary-800 transition-colors duration-300 group-hover:text-secondary-600">
+                                  {r.title}
+                                </span>
+                                <span class="mt-1 block text-[0.75rem] text-ink-muted">
+                                  {formatDate(r.date)}
+                                </span>
+                              </span>
+                            </a>
+                          </li>
+                        );
+                      })
+                    }
+                  </ul>
+                </div>
+              </Reveal>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ======================================================= TERKAIT -->
+  <section class="section bg-sand-100" aria-labelledby="terkait">
+    <div class="container">
+      <Reveal>
+        <h2 id="terkait" class="text-display-sm text-primary-800">Baca juga</h2>
+      </Reveal>
+      <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {
+          related.map((r, i) => (
+            <Reveal delay={i * 90} class="h-full">
+              <NewsCard post={r} class="h-full" />
+            </Reveal>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>

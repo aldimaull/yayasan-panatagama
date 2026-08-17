@@ -1,0 +1,84 @@
+---
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import Ornament from './Ornament.astro';
+import Reveal from './Reveal.astro';
+import { contact, waLink } from '../data/site';
+
+interface Props {
+  title?: string;
+  desc?: string;
+  waMessage?: string;
+  waNumber?: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  class?: string;
+}
+const {
+  title = 'Siap bergabung bersama keluarga Panatagama?',
+  desc = 'Kuota tiap jenjang terbatas. Amankan tempat putra-putri Anda sekarang, atau tanyakan dulu apa pun yang ingin Anda pastikan — kami dengan senang hati menjawab.',
+  waMessage = "Assalamu'alaikum, saya ingin bertanya mengenai pendaftaran siswa baru.",
+  waNumber = contact.mainWhatsApp.number,
+  primaryLabel = 'Daftar Sekarang',
+  primaryHref = '/ppdb',
+  class: className = '',
+} = Astro.props as Props;
+---
+
+<section class={`section-tight relative ${className}`} aria-labelledby="cta-title">
+  <div class="container">
+    <Reveal animation="zoom">
+      <div class="relative overflow-hidden rounded-4xl bg-primary-800 px-7 py-14 text-center md:rounded-5xl md:px-16 md:py-20">
+        <Ornament type="star-grid" class="text-gold-300" opacity={0.06} />
+        <div
+          class="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-secondary-500/25 blur-3xl"
+        >
+        </div>
+        <div
+          class="pointer-events-none absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-gold-400/15 blur-3xl"
+        >
+        </div>
+
+        <div class="relative mx-auto max-w-3xl">
+          <span class="eyebrow justify-center text-gold-300">
+            <Icon name="sparkles" size={14} />
+            SPMB 2027/2028
+          </span>
+
+          <h2 id="cta-title" class="mt-5 text-display-md text-balance text-white">
+            {title}
+          </h2>
+          <p class="mx-auto mt-5 max-w-xl text-lead text-pretty text-white/70">{desc}</p>
+
+          <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button href={primaryHref} variant="secondary" size="lg" icon="arrow-right">
+              {primaryLabel}
+            </Button>
+            <Button
+              href={waLink(waNumber, waMessage)}
+              variant="white"
+              size="lg"
+              icon="whatsapp"
+              iconPosition="left"
+              external
+            >
+              Tanya via WhatsApp
+            </Button>
+          </div>
+
+          <p class="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[0.8rem] text-white/50">
+            <span class="flex items-center gap-1.5">
+              <Icon name="check" size={14} class="text-gold-300" />Gratis konsultasi
+            </span>
+            <span class="flex items-center gap-1.5">
+              <Icon name="check" size={14} class="text-gold-300" />Trial class tersedia
+            </span>
+            <span class="flex items-center gap-1.5">
+              <Icon name="check" size={14} class="text-gold-300" />Dibalas di hari yang sama
+            </span>
+          </p>
+        </div>
+      </div>
+    </Reveal>
+  </div>
+</section>

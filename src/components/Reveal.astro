@@ -1,0 +1,30 @@
+---
+/**
+ * Pembungkus scroll-reveal. Tidak mengirim JS sendiri —
+ * satu IntersectionObserver global di BaseLayout yang mengurus semua elemen [data-reveal].
+ * Atribut lain (mis. data-*) diteruskan ke elemen terluar.
+ */
+interface Props {
+  as?: 'div' | 'section' | 'li' | 'article' | 'span' | 'header' | 'figure' | 'p' | 'ol' | 'ul';
+  animation?: 'up' | 'left' | 'right' | 'zoom' | 'clip';
+  delay?: number;
+  class?: string;
+  [key: string]: unknown;
+}
+const {
+  as: Tag = 'div',
+  animation = 'up',
+  delay = 0,
+  class: className = '',
+  ...rest
+} = Astro.props as Props;
+---
+
+<Tag
+  data-reveal={animation}
+  style={delay ? `--reveal-delay:${delay}ms` : undefined}
+  class={className}
+  {...rest}
+>
+  <slot />
+</Tag>

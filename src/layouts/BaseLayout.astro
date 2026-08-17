@@ -1,0 +1,162 @@
+---
+import '@fontsource-variable/plus-jakarta-sans';
+// URL font di-preload agar teks hero tidak menunggu rantai CSS → font (memperbaiki LCP)
+import jakartaLatin from '@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2?url';
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
+import { site, contact, campuses } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Path gambar OG di /public, contoh: "/og-image.jpg" */
+  image?: string;
+  noindex?: boolean;
+  type?: 'website' | 'article';
+  /** Matikan bila halaman berakhir dengan section gelap yang langsung menempel footer */
+  footerWave?: boolean;
+}
+
+const {
+  title,
+  description = site.description,
+  image = '/og-image.jpg',
+  noindex = false,
+  type = 'website',
+  footerWave = true,
+} = Astro.props as Props;
+
+const fullTitle = title === site.name ? `${site.name} — ${site.tagline}` : `${title} | ${site.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+const ogImage = new URL(image, Astro.site ?? site.url).href;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: site.name,
+  alternateName: site.brand,
+  url: site.url,
+  logo: new URL('/og-image.jpg', site.url).href,
+  description: site.description,
+  slogan: site.tagline,
+  telephone: `+${contact.mainWhatsApp.number}`,
+  email: contact.email,
+  sameAs: [contact.social.instagram.url, contact.social.facebook.url, contact.social.youtube.url],
+  address: campuses.map((c) => ({
+    '@type': 'PostalAddress',
+    streetAddress: c.address,
+    addressLocality: 'Subang',
+    addressRegion: 'Jawa Barat',
+    addressCountry: 'ID',
+  })),
+};
+---
+
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonical} />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0A593A" />
+    <meta name="author" content={site.name} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} — ${site.tagline}`} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="preload" as="font" type="font/woff2" href={jakartaLatin} crossorigin="anonymous" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+
+    <!-- Meta tambahan per halaman (mis. structured data artikel) -->
+    <slot name="head" />
+
+    <ClientRouter />
+  </head>
+
+  <body class="min-h-screen overflow-x-hidden">
+    <a
+      href="#konten"
+      class="sr-only left-4 top-4 z-[60] rounded-full bg-primary-600 px-5 py-3 font-semibold text-white focus:not-sr-only focus:fixed"
+    >
+      Lompat ke konten utama
+    </a>
+
+    <Navbar />
+
+    <main id="konten">
+      <slot />
+    </main>
+
+    <Footer showWave={footerWave} />
+    <FloatingWhatsApp />
+
+    <!-- Observer tunggal untuk seluruh animasi scroll-reveal di halaman -->
+    <script>
+      function initReveal() {
+        // `astro:page-load` juga menyala saat pemuatan awal — hanya proses elemen baru
+        const items = document.querySelectorAll('[data-reveal]:not(.is-revealed):not([data-observed])');
+        if (!items.length) return;
+        items.forEach((el) => el.setAttribute('data-observed', '1'));
+
+        if (
+          !('IntersectionObserver' in window) ||
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ) {
+          items.forEach((el) => el.classList.add('is-revealed'));
+          return;
+        }
+
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-revealed');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.12 },
+        );
+
+        items.forEach((el) => {
+          // Elemen yang sudah terlihat saat halaman dimuat langsung ditampilkan
+          if (el.getBoundingClientRect().top < window.innerHeight * 0.9) {
+            el.classList.add('is-revealed');
+          } else {
+            io.observe(el);
+          }
+        });
+      }
+
+      initReveal();
+      document.addEventListener('astro:page-load', initReveal);
+    </script>
+  </body>
+</html>

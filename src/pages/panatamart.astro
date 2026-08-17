@@ -1,0 +1,329 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import FeatureCard from '../components/FeatureCard.astro';
+import TestimonialCard from '../components/TestimonialCard.astro';
+import Accordion from '../components/Accordion.astro';
+import Reveal from '../components/Reveal.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import Ornament from '../components/Ornament.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { img } from '../lib/images';
+import { getUnit } from '../data/units';
+import { campuses, waLink } from '../data/site';
+import { testimonialsFor } from '../data/testimonials';
+
+const unit = getUnit('panatamart');
+const campus = campuses.find((c) => c.id === unit.campusId)!;
+const quotes = testimonialsFor('panatamart', 2);
+const waMsg = 'Assalamu\'alaikum, saya ingin menanyakan ketersediaan produk di PanataMart.';
+
+const categories = [
+  { icon: 'shirt', name: 'Seragam Sekolah', items: 'Seragam harian, olahraga, muslim, atribut & badge' },
+  { icon: 'book-open', name: 'Buku & Modul', items: 'Buku pelajaran, modul Tilawati, LKS, buku tulis' },
+  { icon: 'palette', name: 'Alat Tulis & Kreativitas', items: 'ATK lengkap, alat mewarnai, perlengkapan prakarya' },
+  { icon: 'shopping-basket', name: 'Sembako & Harian', items: 'Beras, minyak, gula, kebutuhan rumah tangga' },
+  { icon: 'utensils', name: 'Snack Sehat', items: 'Camilan terkurasi, minuman, roti & katering ringan' },
+  { icon: 'blocks', name: 'Perlengkapan Sekolah', items: 'Tas, sepatu, botol minum, kotak makan' },
+];
+---
+
+<BaseLayout
+  title="PanataMart"
+  description="PanataMart — unit usaha dan koperasi Yayasan Panatagama di Subang. Menyediakan seragam, buku, alat tulis, dan kebutuhan harian untuk wali murid dan masyarakat umum."
+>
+  <PageHero
+    eyebrow="Unit Usaha Yayasan"
+    title="Belanja di sini, manfaatnya kembali ke sekolah"
+    highlight="kembali ke sekolah"
+    desc={unit.summary}
+    image="panatamart-hero"
+    breadcrumbs={[{ label: 'PanataMart' }]}
+  >
+    <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+      <Button href={waLink(unit.wa.number, waMsg)} variant="secondary" size="lg" icon="whatsapp" iconPosition="left" external>
+        Pesan via WhatsApp
+      </Button>
+      <Button
+        href="#lokasi"
+        variant="outline"
+        size="lg"
+        icon="map-pin"
+        iconPosition="left"
+        class="!border-white/25 !bg-white/5 !text-white hover:!border-white/60 hover:!bg-white/10"
+      >
+        Lihat Lokasi Toko
+      </Button>
+    </div>
+  </PageHero>
+
+  <!-- ==================================================== JAM OPERASIONAL -->
+  <section class="relative -mt-8 pb-4" aria-label="Jam operasional">
+    <div class="container">
+      <Reveal animation="zoom">
+        <dl class="grid gap-px overflow-hidden rounded-3xl border border-sand-200 bg-sand-200 shadow-lift sm:grid-cols-3">
+          {
+            unit.schedule.map((s) => (
+              <div class="bg-white p-6 text-center md:p-7">
+                <dt class="text-[0.75rem] font-extrabold uppercase tracking-wider text-ink-muted">
+                  {s.label}
+                </dt>
+                <dd class="mt-2 text-[1.05rem] font-extrabold text-primary-800">{s.time}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </Reveal>
+    </div>
+  </section>
+
+  <!-- ======================================================= PROFIL -->
+  <section class="section relative overflow-hidden" aria-labelledby="profil">
+    <Ornament type="blob" class="pointer-events-none absolute -right-48 top-16 h-[32rem] w-[32rem] text-secondary-50" />
+
+    <div class="container relative">
+      <div class="grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
+        <Reveal animation="left">
+          <div class="relative overflow-hidden rounded-4xl shadow-lift">
+            <Image
+              src={img('unit-panatamart')}
+              alt="Toko PanataMart di kompleks kampus Panatagama"
+              widths={[420, 700, 1000]}
+              sizes="(max-width: 1024px) 90vw, 45vw"
+              class="aspect-[4/3] w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        </Reveal>
+
+        <div>
+          <SectionHeading
+            eyebrow="Profil Unit"
+            title="Koperasi yayasan yang melayani sekolah dan warga sekitar"
+            highlight="melayani sekolah"
+            desc="PanataMart hadir untuk memudahkan wali murid: seragam, buku, dan kebutuhan harian tersedia di satu tempat, tepat di area kampus. Keuntungannya tidak keluar dari lingkungan yayasan."
+            maxW="max-w-none"
+          />
+
+          <Reveal delay={200}>
+            <ul class="mt-9 space-y-3.5">
+              {
+                unit.curriculum.map((c) => (
+                  <li class="flex items-start gap-3">
+                    <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-secondary-50 text-secondary-600">
+                      <Icon name="check" size={13} strokeWidth={2.5} />
+                    </span>
+                    <span class="text-[0.9375rem] leading-relaxed text-ink-soft">{c}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </Reveal>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== PRODUK & LAYANAN -->
+  <section class="section bg-sand-100" aria-labelledby="produk">
+    <div class="container">
+      <SectionHeading
+        eyebrow="Produk & Layanan"
+        title="Apa saja yang tersedia di PanataMart"
+        highlight="tersedia"
+        align="center"
+        maxW="max-w-2xl"
+      />
+
+      <div class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          categories.map((c, i) => (
+            <Reveal delay={(i % 3) * 90} class="h-full">
+              <FeatureCard icon={c.icon as any} title={c.name} desc={c.items} class="h-full" />
+            </Reveal>
+          ))
+        }
+      </div>
+
+      <!-- Layanan tambahan -->
+      <div class="mt-10 grid gap-5 md:grid-cols-3">
+        {
+          unit.programs.slice(3).map((p, i) => (
+            <Reveal delay={i * 90} class="h-full">
+              <div class="flex h-full gap-4 rounded-3xl border border-sand-200 bg-white p-6 shadow-soft">
+                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold-100 text-gold-600">
+                  <Icon name={p.icon as any} size={20} />
+                </span>
+                <div>
+                  <h3 class="font-extrabold text-primary-800">{p.title}</h3>
+                  <p class="mt-1.5 text-[0.875rem] leading-relaxed text-ink-soft">{p.desc}</p>
+                </div>
+              </div>
+            </Reveal>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================== PAKET & LAYANAN -->
+  <section class="section" aria-labelledby="paket">
+    <div class="container">
+      <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-5">
+          <SectionHeading
+            eyebrow="Paket Perlengkapan"
+            title="Satu paket, semua kebutuhan awal sekolah"
+            highlight="semua kebutuhan"
+            desc="Tersedia paket perlengkapan lengkap per jenjang maupun pembelian satuan. Ketersediaan ukuran dan rincian paket dapat ditanyakan langsung ke tim kami."
+            maxW="max-w-none"
+          />
+          <Reveal delay={200}>
+            <div class="mt-8">
+              <Button
+                href={waLink(unit.wa.number, "Assalamu'alaikum, saya ingin menanyakan paket perlengkapan sekolah di PanataMart.")}
+                variant="secondary"
+                icon="whatsapp"
+                iconPosition="left"
+                external
+              >
+                Tanya Ketersediaan Ukuran
+              </Button>
+            </div>
+          </Reveal>
+        </div>
+
+        <div class="lg:col-span-7">
+          <div class="grid gap-4 sm:grid-cols-2">
+            {
+              [
+                { icon: 'shirt', title: 'Paket KB & TK', desc: 'Seragam harian, olahraga, tas, dan atribut lengkap ukuran anak.' },
+                { icon: 'graduation-cap', title: 'Paket SD', desc: 'Seragam lengkap, buku tulis, dan perlengkapan belajar kelas 1–6.' },
+                { icon: 'book-open', title: 'Paket SMP', desc: 'Seragam, atribut, serta perlengkapan praktik dan olahraga.' },
+                { icon: 'palette', title: 'Paket Alat Tulis', desc: 'Perlengkapan tulis satu semester, bisa dibeli satuan.' },
+              ].map((p, i) => (
+                <Reveal delay={(i % 2) * 90} class="h-full">
+                  <div class="flex h-full gap-4 rounded-3xl border border-sand-200 bg-white p-6 shadow-soft transition-all duration-500 ease-out-expo hover:-translate-y-1 hover:border-primary-200 hover:shadow-lift">
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                      <Icon name={p.icon as any} size={20} />
+                    </span>
+                    <div>
+                      <h3 class="font-extrabold text-primary-800">{p.title}</h3>
+                      <p class="mt-1.5 text-[0.875rem] leading-relaxed text-ink-soft">{p.desc}</p>
+                    </div>
+                  </div>
+                </Reveal>
+              ))
+            }
+          </div>
+
+          <Reveal delay={140}>
+            <p class="mt-5 flex items-start gap-2.5 rounded-2xl border border-primary-100 bg-primary-50 px-5 py-4 text-[0.85rem] text-primary-800">
+              <Icon name="message-circle" size={17} class="mt-px shrink-0" />
+              <span>
+                Rincian paket dan ketersediaan ukuran disampaikan langsung oleh tim PanataMart melalui
+                WhatsApp.
+              </span>
+            </p>
+          </Reveal>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================== LOKASI -->
+  <section id="lokasi" class="section scroll-mt-24 bg-sand-100" aria-labelledby="lokasi-heading">
+    <div class="container">
+      <SectionHeading
+        eyebrow="Lokasi"
+        title="Mampir saat menjemput ananda"
+        highlight="saat menjemput"
+        desc="PanataMart berada di dalam kompleks Kampus 2, bersebelahan dengan area parkir dan jemputan."
+        align="center"
+        maxW="max-w-2xl"
+      />
+
+      <Reveal delay={120}>
+        <div class="mt-14 grid gap-8 overflow-hidden rounded-4xl border border-sand-200 bg-white p-6 shadow-soft md:p-8 lg:grid-cols-5">
+          <div class="lg:col-span-2">
+            <h3 class="text-lg font-extrabold text-primary-800">{campus.name}</h3>
+            <p class="mt-3 flex gap-2.5 text-[0.9375rem] leading-relaxed text-ink-soft">
+              <Icon name="map-pin" size={18} class="mt-0.5 shrink-0 text-secondary-500" />
+              {campus.address}
+            </p>
+            <div class="mt-6 space-y-3">
+              {
+                unit.schedule.map((s) => (
+                  <p class="flex items-center justify-between border-b border-sand-200 pb-3 text-[0.875rem] last:border-0">
+                    <span class="font-semibold text-ink-soft">{s.label}</span>
+                    <span class="font-bold text-primary-800">{s.time}</span>
+                  </p>
+                ))
+              }
+            </div>
+            <div class="mt-7 flex flex-col gap-3">
+              <Button href={waLink(unit.wa.number, waMsg)} variant="secondary" icon="whatsapp" iconPosition="left" external fullWidth>
+                Hubungi PanataMart
+              </Button>
+              <Button
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(campus.mapQuery)}`}
+                variant="outline"
+                icon="arrow-up-right"
+                external
+                fullWidth
+              >
+                Buka di Google Maps
+              </Button>
+            </div>
+          </div>
+
+          <div class="overflow-hidden rounded-3xl border border-sand-200 lg:col-span-3">
+            <iframe
+              src={campus.mapEmbed}
+              title={`Peta lokasi ${campus.name}`}
+              width="100%"
+              height="100%"
+              style="border:0;min-height:22rem"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+      </Reveal>
+    </div>
+  </section>
+
+  <!-- =================================================== TESTIMONI & FAQ -->
+  <section class="section" aria-labelledby="faq-panatamart">
+    <div class="container">
+      <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-5">
+          <SectionHeading
+            eyebrow="Pertanyaan Umum"
+            title="Yang sering ditanyakan pembeli"
+            highlight="sering ditanyakan"
+            maxW="max-w-none"
+          />
+          <div class="mt-8 space-y-5">
+            {quotes.map((t, i) => <Reveal delay={i * 90}><TestimonialCard item={t} /></Reveal>)}
+          </div>
+        </div>
+        <div class="lg:col-span-7">
+          <Accordion items={unit.faq} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Butuh seragam atau perlengkapan sekolah?"
+    desc="Kirim daftar kebutuhan Anda lewat WhatsApp, tim PanataMart akan mengecek ketersediaan stok dan ukuran."
+    primaryLabel="Lihat Lokasi Toko"
+    primaryHref="#lokasi"
+    waNumber={unit.wa.number}
+    waMessage={waMsg}
+  />
+</BaseLayout>
