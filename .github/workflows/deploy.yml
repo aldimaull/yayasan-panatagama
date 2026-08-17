@@ -8,7 +8,7 @@ on:
     branches: [main]
   repository_dispatch:
     types: [wp-publish]
-  workflow_dispatch: {}  # biar bisa juga di-trigger manual dari tab Actions
+  workflow_dispatch: {} # biar bisa juga di-trigger manual dari tab Actions
 
 jobs:
   build-and-deploy:
@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -29,7 +29,7 @@ jobs:
       - name: Build Astro site
         run: npm run build
         env:
-          WP_GRAPHQL_URL: ${{ secrets.WP_GRAPHQL_URL }}
+          WP_REST_URL: ${{ secrets.WP_REST_URL }}
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
