@@ -19,11 +19,11 @@ npm run dev
 
 Buka http://localhost:4321
 
-| Perintah | Fungsi |
-| --- | --- |
-| `npm run dev` | Server pengembangan |
-| `npm run build` | Build produksi ke `dist/` |
-| `npm run preview` | Pratinjau hasil build |
+| Perintah                  | Fungsi                                            |
+| ------------------------- | ------------------------------------------------- |
+| `npm run dev`             | Server pengembangan                               |
+| `npm run build`           | Build produksi ke `dist/`                         |
+| `npm run preview`         | Pratinjau hasil build                             |
 | `npm run generate:images` | Membuat ulang gambar placeholder di `src/assets/` |
 
 ---
@@ -62,12 +62,12 @@ cukup menambah objek pada array — halaman dan rute ikut terbentuk otomatis.
 
 Token warna & tipografi ada di `tailwind.config.mjs`.
 
-| Peran | Warna | Penggunaan |
-| --- | --- | --- |
-| Primary | `#0A593A` (`primary-600`) | Navbar solid, footer, heading, section gelap |
-| Secondary | `#EA5B23` (`secondary-500`) | Aksen CTA, garis dekoratif, ikon |
-| Tersier | `#E0A600` (`gold-400`) | Badge, highlight, ornamen |
-| Netral | `sand-*`, `ink-*` | Latar off-white & teks |
+| Peran     | Warna                       | Penggunaan                                   |
+| --------- | --------------------------- | -------------------------------------------- |
+| Primary   | `#0A593A` (`primary-600`)   | Navbar solid, footer, heading, section gelap |
+| Secondary | `#EA5B23` (`secondary-500`) | Aksen CTA, garis dekoratif, ikon             |
+| Tersier   | `#E0A600` (`gold-400`)      | Badge, highlight, ornamen                    |
+| Netral    | `sand-*`, `ink-*`           | Latar off-white & teks                       |
 
 Catatan kontras: teks putih di atas `#EA5B23` hanya mencapai 3.5:1, di bawah ambang WCAG AA.
 Karena itu **alas tombol dan badge memakai `secondary-600` (`#CB4514`, 4.8:1)** sementara
@@ -102,23 +102,6 @@ Data yang **sudah sesuai brosur resmi**: alamat kedua kampus, nomor WhatsApp per
 visi & misi, daftar fasilitas, kurikulum, program kokurikuler, ekstrakurikuler, jam belajar,
 akreditasi, dan anggota Panatagama Group. **Struktur organisasi** sudah memakai nama pejabat
 sebenarnya.
-
----
-
-## Kebijakan: biaya pendidikan tidak ditampilkan
-
-Informasi biaya bersifat rahasia dan **sengaja tidak ada di website maupun di data layer** —
-tidak ada nominal, potongan, skema cicilan, atau perbandingan biaya antar jenjang. Semua
-pertanyaan soal biaya diarahkan ke panitia SPMB lewat WhatsApp per jenjang.
-
-Jika nanti perlu ditambahkan kembali, jangan hanya menambah section di halaman: hapus dulu
-catatan larangan di `src/data/units.ts` dan `src/data/ppdb.ts` supaya tidak membingungkan.
-
-Untuk memastikan tidak ada yang lolos, periksa hasil build:
-
-```bash
-grep -rniE "Rp ?[0-9]|uang pangkal|\bSPP\b|cicil|diskon" dist --include=*.html
-```
 
 ---
 
