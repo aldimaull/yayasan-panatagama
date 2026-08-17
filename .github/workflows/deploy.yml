@@ -1,0 +1,41 @@
+name: Build & Deploy Astro Site
+
+# Jalan otomatis kalau:
+# 1. Ada push manual ke branch main (development biasa)
+# 2. Ada trigger dari WordPress lewat repository_dispatch (post baru di-publish)
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [wp-publish]
+  workflow_dispatch: {}  # biar bisa juga di-trigger manual dari tab Actions
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Astro site
+        run: npm run build
+        env:
+          WP_GRAPHQL_URL: ${{ secrets.WP_GRAPHQL_URL }}
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: ./
