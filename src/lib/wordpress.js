@@ -20,9 +20,8 @@ export async function fetchGraphQL(query, variables = {}) {
   return json.data;
 }
 
-// Query semua berita sekaligus isi lengkapnya. Dipakai baik untuk halaman
-// daftar (/berita) maupun untuk generate halaman detail (/berita/[slug]),
-// supaya cuma butuh 1 kali fetch saat build.
+// Query semua berita, sekarang termasuk kategori dari taxonomy
+// "Kategori Berita" (GraphQL name: kategoriBeritas).
 const GET_ALL_BERITA = `
   query GetAllBerita {
     beritas(first: 100, where: { orderby: { field: DATE, order: DESC } }) {
@@ -45,26 +44,33 @@ const GET_ALL_BERITA = `
         detailBerita {
           ringkasan
         }
+        kategoriBeritas {
+          nodes {
+            name
+          }
+        }
       }
     }
   }
 `;
 
-// Fallback gambar lokal (sudah ada di src/assets/) dipakai kalau
-// post WordPress belum punya featured image.
 const FALLBACK_COVER = "berita-04";
-
-// Nama penulis belum bisa diambil dinamis dari WordPress karena
-// Custom Post Type "Berita" belum mengaktifkan dukungan "Author".
-// Untuk mengaktifkannya: Custom Fields → Post Types → Berita → Settings
-// → centang "Author" di bagian Supports, baru field author bisa
-// ditambahkan ke query GraphQL di atas.
 const DEFAULT_AUTHOR = "Admin Panatagama";
 
-// `Post['category']` di project ini adalah union type tertutup:
+// `Post['category']` di kode Astro adalah union type tertutup:
 // 'Prestasi' | 'Kegiatan' | 'Pengumuman' | 'Parenting'.
-// Taxonomy kategori belum dibuat di WordPress, jadi sementara
-// semua berita di-set 'Kegiatan' dulu. Update setelah taxonomy jadi.
+// Term taxonomy di WordPress sudah dibuat persis 4 nama ini,
+// jadi tinggal dipetakan langsung. Kalau post belum diberi
+// kategori sama sekali di WordPress, fallback ke 'Kegiatan'
+// supaya tidak merusak badge warna di NewsCard.
+const VALID_CATEGORIES = ["Prestasi", "Kegiatan", "Pengumuman", "Parenting"];
+const DEFAULT_CATEGORY = "Kegiatan";
+
+function resolveCategory(node) {
+  const name = node.kategoriBeritas?.nodes?.[0]?.name;
+  return VALID_CATEGORIES.includes(name) ? name : DEFAULT_CATEGORY;
+}
+
 function mapBeritaToPost(node) {
   const plainText = stripHtml(node.content);
   const wordCount = plainText.split(/\s+/).filter(Boolean).length;
@@ -80,12 +86,9 @@ function mapBeritaToPost(node) {
     cover: featuredImg?.sourceUrl || FALLBACK_COVER,
     coverWidth: featuredImg?.mediaDetails?.width || null,
     coverHeight: featuredImg?.mediaDetails?.height || null,
-    category: "Kegiatan",
+    category: resolveCategory(node),
     readingTime,
     author: DEFAULT_AUTHOR,
-    // HTML mentah dari WordPress (block editor). Dirender langsung
-    // pakai set:html di halaman detail, bukan di-split jadi array
-    // paragraf string seperti versi statis sebelumnya.
     content: node.content || "",
   };
 }
